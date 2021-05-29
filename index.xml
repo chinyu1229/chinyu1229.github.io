@@ -3,9 +3,20 @@
         <title>攻城獅</title>
         <link>http://chinyu1229.github.io/</link>
         <description>攻城獅</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 20 May 2021 01:12:12 &#43;0800</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 29 May 2021 23:10:12 &#43;0800</lastBuildDate>
             <atom:link href="http://chinyu1229.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Linux Chapter 20 Signal 基本概念</title>
+    <link>http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</link>
+    <pubDate>Sat, 29 May 2021 23:10:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</guid>
+    <description><![CDATA[Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
+行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
+訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
+ signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt; void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
+#include&lt;signal.h&gt; #include&quot;tlpi_hdr.h&quot; static void sigHandler(int sig) { printf(&quot;Ouch!\n&quot;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&quot;signal&quot;); for(j = 0;;j++) { printf(&quot;%d\n&quot;, j); sleep(3); } } result:]]></description>
+</item><item>
     <title>Linux 嵌入式開發 – 並行開發—SystemV IPC</title>
     <link>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</link>
     <pubDate>Thu, 20 May 2021 01:12:12 &#43;0800</pubDate>
@@ -70,16 +81,5 @@ accessMode = flags &amp; O_ACCMODE; if(accessMode == O_WRONLY || accessMode == O
    file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
 #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CTEATflags可以省略）
  由於flags各個參數互相獨立（除了必選項不可重複）皆可以使用|來新增性質  必選項：以下三個常數中必須指定一個，且僅允許指定一個。    flags 用途     O_RDONLY 以唯讀模式開啟   O_WRONLY 以唯寫模式開啟   O_RDWR 以讀寫模式開啟    以可讀寫方式打開文件。上述三種旗標是互斥的，也就是不可同時使用，但可與下列的旗標利用OR(|)運算符組合。]]></description>
-</item><item>
-    <title></title>
-    <link>http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</link>
-    <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-    <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</guid>
-    <description><![CDATA[Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
-行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
-訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
- signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt; void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
-#include&lt;signal.h&gt; #include&quot;tlpi_hdr.h&quot; static void sigHandler(int sig) { printf(&quot;Ouch!\n&quot;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&quot;signal&quot;); for(j = 0;;j++) { printf(&quot;%d\n&quot;, j); sleep(3); } } result:]]></description>
 </item></channel>
 </rss>
