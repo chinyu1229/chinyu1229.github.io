@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Linux Chapter 13 - 檔案IO緩衝區 - 攻城獅</title><meta name="Description" content=""><meta property="og:title" content="Linux Chapter 13 - 檔案IO緩衝區" />
+<meta property="og:description" content="檔案I/O緩衝區 The Linux programming interface chapter 13
+核心緩衝區概述 system call read() &amp; write()在操作磁碟檔案時不會直接對磁碟存取，而是單純在使用者空間緩衝區與核心緩衝區快取（kernel buffer cache）之間複製資料。 例如： write(fd, &quot;abc&quot;,3) 在後續的某個時間點，核心會將其緩衝區的資料寫入磁碟
+如果在此期間，另外一個process試圖讀取檔案的這幾個bytes，則核心將自動從緩衝區提供資料，而不是從檔案讀取。同理於read()期間有write() process的情況
+緩衝區大小對效能的影響  system cpu time：主要是測量使用者空間與核心空間之間資料傳輸所消耗的時間  包含CPU的處理, 等待I/O I/O的處理,作業系統處理提供一些服務額外的時間，以及系統閒置的時間   Elapsed time : 完整的程式在這個系統裡面執行的時間  當緩衝區大小為1byte，需要呼叫大約一億次的system call，而緩衝區大小為4096bytes時，system call次數約為24000，當超過此設定值，效能的改善就開始不明顯，是因為在使用者空間和核心空間之間複製資料以及執行實際I/O所需的時間相較之下，read()和write()的system call 成本就顯得微不足道。
+＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
+stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
+設定一個stdio stream的緩衝模式 #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size); 在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-05-20T01:04:12&#43;08:00" />
+<meta property="article:modified_time" content="2021-05-20T01:04:12&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux Chapter 13 - 檔案IO緩衝區"/>
+<meta name="twitter:description" content="檔案I/O緩衝區 The Linux programming interface chapter 13
+核心緩衝區概述 system call read() &amp; write()在操作磁碟檔案時不會直接對磁碟存取，而是單純在使用者空間緩衝區與核心緩衝區快取（kernel buffer cache）之間複製資料。 例如： write(fd, &quot;abc&quot;,3) 在後續的某個時間點，核心會將其緩衝區的資料寫入磁碟
+如果在此期間，另外一個process試圖讀取檔案的這幾個bytes，則核心將自動從緩衝區提供資料，而不是從檔案讀取。同理於read()期間有write() process的情況
+緩衝區大小對效能的影響  system cpu time：主要是測量使用者空間與核心空間之間資料傳輸所消耗的時間  包含CPU的處理, 等待I/O I/O的處理,作業系統處理提供一些服務額外的時間，以及系統閒置的時間   Elapsed time : 完整的程式在這個系統裡面執行的時間  當緩衝區大小為1byte，需要呼叫大約一億次的system call，而緩衝區大小為4096bytes時，system call次數約為24000，當超過此設定值，效能的改善就開始不明顯，是因為在使用者空間和核心空間之間複製資料以及執行實際I/O所需的時間相較之下，read()和write()的system call 成本就顯得微不足道。
+＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
+stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
+設定一個stdio stream的緩衝模式 #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size); 在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !"/>
+<meta name="application-name" content="攻城獅">
+<meta name="apple-mobile-web-app-title" content="攻城獅"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><link rel="prev" href="http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/" /><link rel="next" href="http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Linux Chapter 13 - 檔案IO緩衝區",
+        "inLanguage": "en-us",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/chinyu1229.github.io\/posts\/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80\/"
+        },"genre": "posts","wordcount":  260 ,
+        "url": "http:\/\/chinyu1229.github.io\/posts\/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80\/","datePublished": "2021-05-20T01:04:12+08:00","dateModified": "2021-05-20T01:04:12+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="攻城獅">攻城獅</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="攻城獅">攻城獅</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Linux Chapter 13 - 檔案IO緩衝區</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-20">2021-05-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;260 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#核心緩衝區概述">核心緩衝區概述</a></li>
+    <li><a href="#緩衝區大小對效能的影響">緩衝區大小對效能的影響</a></li>
+    <li><a href="#stdio函式庫的緩衝">stdio函式庫的緩衝</a>
+      <ul>
+        <li><a href="#設定一個stdio-stream的緩衝模式">設定一個stdio stream的緩衝模式</a></li>
+        <li><a href="#範例">範例</a></li>
+        <li><a href="#刷新stdio緩衝區">刷新stdio緩衝區</a></li>
+        <li><a href="#控制檔案io的核心緩衝">控制檔案I/O的核心緩衝</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="檔案io緩衝區">檔案I/O緩衝區</h1>
+<p>The Linux programming interface chapter 13</p>
+<h2 id="核心緩衝區概述">核心緩衝區概述</h2>
+<p>system call read() &amp; write()在操作磁碟檔案時不會直接對磁碟存取，而是單純在使用者空間緩衝區與核心緩衝區快取（kernel buffer cache）之間複製資料。
+例如： <code>write(fd, &quot;abc&quot;,3)</code>
+在後續的某個時間點，核心會將其<em>緩衝區</em>的資料寫入磁碟</p>
+<p><strong>如果在此期間，另外一個process試圖讀取檔案的這幾個bytes，則核心將自動從緩衝區提供資料，而不是從檔案讀取。同理於read()期間有write() process的情況</strong></p>
+<h2 id="緩衝區大小對效能的影響">緩衝區大小對效能的影響</h2>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://i.imgur.com/OVUHxqa.jpg"
+        data-srcset="https://i.imgur.com/OVUHxqa.jpg, https://i.imgur.com/OVUHxqa.jpg 1.5x, https://i.imgur.com/OVUHxqa.jpg 2x"
+        data-sizes="auto"
+        alt="https://i.imgur.com/OVUHxqa.jpg"
+        title="https://i.imgur.com/OVUHxqa.jpg" /></p>
+<ul>
+<li>system cpu time：主要是測量使用者空間與核心空間之間資料傳輸所消耗的時間
+<ul>
+<li>包含CPU的處理, 等待I/O I/O的處理,作業系統處理提供一些服務額外的時間，以及系統閒置的時間</li>
+</ul>
+</li>
+<li>Elapsed time : 完整的程式在這個系統裡面執行的時間</li>
+</ul>
+<p>當緩衝區大小為1byte，需要呼叫大約一億次的system call，而緩衝區大小為4096bytes時，system call次數約為24000，當超過此設定值，效能的改善就開始不明顯，是因為在使用者空間和核心空間之間複製資料以及執行實際I/O所需的時間相較之下，read()和write()的system call 成本就顯得微不足道。</p>
+<p>＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能</p>
+<h2 id="stdio函式庫的緩衝">stdio函式庫的緩衝</h2>
+<p>操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。</p>
+<h3 id="設定一個stdio-stream的緩衝模式">設定一個stdio stream的緩衝模式</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">setvbuf</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">int</span> <span class="n">mode</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">);</span>
+</code></pre></div><p><strong>在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為</strong></p>
+<ul>
+<li>參數
+<ul>
+<li>stream:可以識別要修改的檔案stream緩衝區</li>
+<li>buf &amp; size 指定使用的緩衝區
+<ul>
+<li>若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂</li>
+<li>若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小</li>
+</ul>
+</li>
+<li>mode指定緩衝區的類型<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://i.imgur.com/sIsu0YR.jpg"
+        data-srcset="https://i.imgur.com/sIsu0YR.jpg, https://i.imgur.com/sIsu0YR.jpg 1.5x, https://i.imgur.com/sIsu0YR.jpg 2x"
+        data-sizes="auto"
+        alt="https://i.imgur.com/sIsu0YR.jpg"
+        title="https://i.imgur.com/sIsu0YR.jpg" /></li>
+</ul>
+</li>
+</ul>
+<h3 id="範例">範例</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#defind BUF_SIZE 1024
+</span><span class="cp"></span><span class="k">static</span> <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUF_SIZE</span><span class="p">];</span>
+<span class="k">if</span><span class="p">(</span><span class="n">setvbuf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">_IOFBF</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">errexit</span><span class="p">(</span><span class="s">&#34;setbuf&#34;</span><span class="p">);</span>
+</code></pre></div><p>＊setvbuf()出錯時會傳回非0值</p>
+<p>setbuf()位於setvbuf上層</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">setbuf</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
+</code></pre></div><ul>
+<li>呼叫<code>setbuf(fp,buf)</code>等同於<code>setvbuf(fp, buf, (buf != NULL) ? _IOFBF: _IONBF, BUFSIZ);</code></li>
+<li>參數
+<ul>
+<li>buf可以指定為NULL表示無緩衝，或指向由呼叫者配置的BUFSIZ大小的緩衝區（BUFSIZ定義在&lt;stdio.h&gt;通常是8192）</li>
+</ul>
+</li>
+</ul>
+<p>setbuffer()與setbuf()相似，但允許呼叫者指定buf緩衝區的大小</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define _BSD_SOURCE
+</span><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">setbuffer</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">);</span>
+</code></pre></div><ul>
+<li>SUSv3並未規範此函式，但多數UNIX有提供</li>
+</ul>
+<h3 id="刷新stdio緩衝區">刷新stdio緩衝區</h3>
+<p>我們可以用fflush()函式強制寫入stdio的輸出串流資料（如透過<code>write()</code>刷新寫入核心緩衝區）。此函式會刷新指定stream的輸出緩衝區</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">fflush</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+</code></pre></div><ul>
+<li>參數
+<ul>
+<li>若stream為NULL，則fflush將刷新與<strong>output stream</strong>相關的每個stdio緩衝區</li>
+</ul>
+</li>
+<li>也能應用於輸入串流，這將捨棄緩衝區裡面的所有輸入資料（當程序下次嘗試從串流讀資料，將重頭開始寫入緩衝區）</li>
+<li>當關閉對應的串流時，會自動刷新stdio的緩衝區</li>
+<li>在許多c函式庫實作中，若stdin stdout是參考到terminal，則從stdin讀取輸入時，都會進行一次<code>fflush(stdout)</code>呼叫，效果是刷新寫入stdout的任何提示，但不包含結尾的換行符號
+範例1:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">);</span>
+    <span class="n">fflush</span><span class="p">();</span><span class="c1">//fflush(stdout);
+</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>常用於立刻將輸入值印出來。</p>
+<p>範例2：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Enter a integer:&#34;</span><span class="p">);</span>
+        <span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>此範例如果輸入非int類型的值，則輸入值會放入緩衝區，而導致你下個迴圈的輸入無法被讀到，因為scanf會一直去緩衝區讀取，而不會理會使用者輸入。可以在scanf()前面加上，fflush(stdin)，但不是每個系統都有支援fflush(stdin)。這時候可以利用一些特殊的函數（內部本身就包含fflush()），來解決這種問題。</p>
+<h3 id="控制檔案io的核心緩衝">控制檔案I/O的核心緩衝</h3>
+<p>可以強制將核心緩衝區刷新到輸出檔，例如資料庫的日誌行程，要確保在繼續操作前將結果真正的寫入到硬碟（或硬碟的快取）</p>
+<h4 id="同步io資料完整性與同步io檔案完整性">同步I/O資料完整性與同步I/O檔案完整性</h4>
+<p>SUSv3將同步I/O完成(synchronized IO completion) 定義為： 一種I/O操作，若非已成功傳輸（到硬碟），及診斷為同步失敗</p>
+<p>有兩種不同類型的同步I/O完成</p>
+<ol>
+<li>
+<p>synchronized I/O data integrity completion(資料完整性)</p>
+<ul>
+<li>對於read操作，意思是所需的檔案已經（從硬碟）傳輸給process。若有任何未完成的write操作並且會影響資料的read時，會在進行read前，將資料寫入磁碟</li>
+<li>對於write操作，意思是在write請求的指定資料已經傳輸（到硬碟）完成，而且用以取得資料所需的全部檔案中的<strong>中繼資料</strong>也已經全部傳輸（到硬碟）完成。
+<ul>
+<li>關鍵在於不需要將全部的已修改檔案中的中繼資料屬性傳輸完成，就可以檢索檔案資料</li>
+<li>需要傳輸的其中一個中繼資料屬性是檔案的大小</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>synchronized I/O file integrity compliction(檔案完整性)</p>
+<ul>
+<li>與資料完整性的差異在於，在檔案更新期間，會將<strong>全部已更新的檔案中繼資料傳輸到硬碟</strong>，即使後續的檔案read操作不需要檔案中繼資料</li>
+</ul>
+</li>
+</ol>
+<p><strong>中繼資料（metadata）：檔案擁有者與所屬群組 檔案權限，檔案大小，檔案的（hard）連結數量，檔案最後的存取時間，最後修改時間，中繼資料發生變化的時間，檔案資料區塊指標</strong></p>
+<h4 id="用於控制檔案io核心緩衝的系統呼叫">用於控制檔案I/O核心緩衝的系統呼叫</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">fsync</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">);</span>
+                        <span class="err">成功返回</span><span class="mi">0</span><span class="p">,</span><span class="err">失敗返回</span><span class="o">-</span><span class="mi">1</span>
+</code></pre></div><ul>
+<li>將緩衝資料與開啟檔案的fd相關的metadate刷新到磁碟</li>
+<li>會強制檔案處於I/O檔案完整性狀態</li>
+<li>會在完成磁碟裝置（或快取記憶體）的傳輸之後才返回</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">fdatasync</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">);</span>
+                       <span class="err">成功返回</span><span class="mi">0</span><span class="p">,</span><span class="err">失敗返回</span><span class="o">-</span><span class="mi">1</span>  
+</code></pre></div><ul>
+<li>會強制檔案處於I/O資料完整性狀態</li>
+<li>操作與fsync()類似</li>
+<li>可能會降低磁碟操作的次數</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">sync</span><span class="p">(</span><span class="kt">int</span> <span class="kt">void</span><span class="p">);</span>
+</code></pre></div><ul>
+<li>會將包含更新檔案資訊的全部核心緩衝區（資料區塊，指標區塊，中繼資料等）刷新到磁碟</li>
+<li>在已將全部資料傳輸到磁碟裝置（或者是快取）之後返回</li>
+<li>在SUSv3中，實作時只是單純對I/O傳遞進行排班，因此可以在未完成之前返回</li>
+</ul>
+<h4 id="同步全部的寫入檔案">同步全部的寫入檔案</h4>
+<p>在呼叫open()時指定O_SYNC flag可以讓全部的後續輸出同步</p>
+<pre><code>fd = open(pathname,O_WRONLY | O_SYNC);
+</code></pre><p>每次write()檔案都會自動將檔案資料與中繼資料刷新到硬碟（依照檔案完整性進行寫入操作）</p>
+<p>關於O_SYNC對效能的影響可以參考 書籍p.265</p>
+<h4 id="io緩衝摘要">I/O緩衝摘要</h4>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://i.imgur.com/EanlGPj.jpg"
+        data-srcset="https://i.imgur.com/EanlGPj.jpg, https://i.imgur.com/EanlGPj.jpg 1.5x, https://i.imgur.com/EanlGPj.jpg 2x"
+        data-sizes="auto"
+        alt="https://i.imgur.com/EanlGPj.jpg"
+        title="https://i.imgur.com/EanlGPj.jpg" /></p>
+<h4 id="繞過緩衝區快取直接io">繞過緩衝區快取：直接I/O</h4>
+<p>在進行磁碟I/O時，繞過緩衝區快取，可以直接從使用者空間將資料傳輸到檔案或磁碟裝置。
+direct I/O有時反而會大幅降低效能，因為核心為了改善效能，進行的許多優化。因此只適用於有特定I/O需求的應用，例如資料庫系統有自己的快取和I/O優化，所以不需要核心消耗CPU的時間與記憶體去進行同樣的工作。</p>
+<ul>
+<li>可以對個別的檔案或block device進行直接I/O，可以在open()指定O_DIRECT flag。</li>
+</ul>
+<p>direct I/O的對齊限制</p>
+<ul>
+<li>傳虛用途的資料緩衝區，必須對齊符合block size倍數的記憶體邊界</li>
+<li>資料傳輸的開始點，即檔案或裝置的偏移量，必須是block size的倍數</li>
+<li>待傳輸資料的長度必須是block sizek的倍數</li>
+</ul>
+<h4 id="為檔案io混搭函式庫函式與system-call">為檔案I/O混搭函式庫函式與system call</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">filno</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+                            <span class="n">Returns</span> <span class="n">file</span> <span class="n">descriptor</span> <span class="n">on</span> <span class="n">sucess</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+<span class="n">FILE</span> <span class="o">*</span><span class="n">fdopen</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">);</span>
+                            <span class="n">Returns</span> <span class="p">(</span><span class="n">new</span><span class="p">)</span> <span class="n">file</span> <span class="n">pointer</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="nb">NULL</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><p>對同一個檔案進行I/O操作時，可以混搭system call與標準C函式庫的函式</p>
+<ul>
+<li>fdopen()是fileno()的反函式，此函式會建立一個與此檔案描述符對應的stream給I/O使用</li>
+<li>fdopen()對非正規檔案的描述符特別有用，例如建立通訊（socket）和 pipe的system call</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-05-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/" class="prev" rel="prev" title="Linux Chapter 5 - 檔案IO深入探討"><i class="fas fa-angle-left fa-fw"></i>Linux Chapter 5 - 檔案IO深入探討</a>
+            <a href="/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" class="next" rel="next" title="Linux 嵌入式開發 – 並行開發—進程與線程">Linux 嵌入式開發 – 並行開發—進程與線程<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
