@@ -14,8 +14,8 @@
     <description><![CDATA[Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
 行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
 訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
- signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt; void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
-#include&lt;signal.h&gt; #include&quot;tlpi_hdr.h&quot; static void sigHandler(int sig) { printf(&quot;Ouch!\n&quot;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&quot;signal&quot;); for(j = 0;;j++) { printf(&quot;%d\n&quot;, j); sleep(3); } } result:]]></description>
+ signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
+#include&lt;signal.h&gt;#include&#34;tlpi_hdr.h&#34; static void sigHandler(int sig) { printf(&#34;Ouch!\n&#34;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&#34;signal&#34;); for(j = 0;;j++) { printf(&#34;%d\n&#34;, j); sleep(3); } } result:]]></description>
 </item><item>
     <title>Linux 嵌入式開發 – 並行開發—SystemV IPC</title>
     <link>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</link>

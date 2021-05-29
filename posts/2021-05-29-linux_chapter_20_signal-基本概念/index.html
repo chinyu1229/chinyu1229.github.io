@@ -9,8 +9,8 @@
 <meta property="og:description" content="Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
 行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
 訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
- signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt; void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
-#include&lt;signal.h&gt; #include&quot;tlpi_hdr.h&quot; static void sigHandler(int sig) { printf(&quot;Ouch!\n&quot;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&quot;signal&quot;); for(j = 0;;j&#43;&#43;) { printf(&quot;%d\n&quot;, j); sleep(3); } } result:" />
+ signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
+#include&lt;signal.h&gt;#include&#34;tlpi_hdr.h&#34; static void sigHandler(int sig) { printf(&#34;Ouch!\n&#34;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&#34;signal&#34;); for(j = 0;;j&#43;&#43;) { printf(&#34;%d\n&#34;, j); sleep(3); } } result:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-29T23:10:12&#43;08:00" />
@@ -21,8 +21,8 @@
 <meta name="twitter:description" content="Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
 行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
 訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
- signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt; void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
-#include&lt;signal.h&gt; #include&quot;tlpi_hdr.h&quot; static void sigHandler(int sig) { printf(&quot;Ouch!\n&quot;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&quot;signal&quot;); for(j = 0;;j&#43;&#43;) { printf(&quot;%d\n&quot;, j); sleep(3); } } result:"/>
+ signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
+#include&lt;signal.h&gt;#include&#34;tlpi_hdr.h&#34; static void sigHandler(int sig) { printf(&#34;Ouch!\n&#34;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&#34;signal&#34;); for(j = 0;;j&#43;&#43;) { printf(&#34;%d\n&#34;, j); sleep(3); } } result:"/>
 <meta name="application-name" content="攻城獅">
 <meta name="apple-mobile-web-app-title" content="攻城獅"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -35,7 +35,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/chinyu1229.github.io\/posts\/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5\/"
-        },"genre": "posts","wordcount":  397 ,
+        },"genre": "posts","wordcount":  387 ,
         "url": "http:\/\/chinyu1229.github.io\/posts\/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5\/","datePublished": "2021-05-29T23:10:12+08:00","dateModified": "2021-05-29T23:10:12+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -85,7 +85,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Linux Chapter 20 Signal 基本概念</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-29">2021-05-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;397 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-29">2021-05-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;387 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -141,10 +141,10 @@
 <li>sigaction()是建立訊號處置常式首推的API</li>
 <li>signal() 是基於 sigaction()實作的函式</li>
 </ul>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-void (*signal(int sig, void (*handler)(int)));
-        Return previous signal disposition on success,or SIG_ERR on error
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">signal</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">handler</span><span class="p">)(</span><span class="kt">int</span><span class="p">)));</span>
+        <span class="n">Return</span> <span class="n">previous</span> <span class="n">signal</span> <span class="n">disposition</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span><span class="n">or</span> <span class="n">SIG_ERR</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><ul>
 <li>handler可以用以下的值取代
 <ul>
 <li>SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置</li>
@@ -154,25 +154,25 @@ void (*signal(int sig, void (*handler)(int)));
 </ul>
 <h2 id="訊號處理常式">訊號處理常式</h2>
 <p>範例：</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-#include&quot;tlpi_hdr.h&quot;
-
-static void sigHandler(int sig)
-{
-    printf(&quot;Ouch!\n&quot;);
-}
-int main(int argc[], char *argv[])
-{
-    int j;
-    if(signal(SIGINT, sigHandler) == SIG_ERR)
-        errExit(&quot;signal&quot;);
-    for(j = 0;;j++)
-    {
-        printf(&quot;%d\n&quot;, j);
-        sleep(3);
-    }
-}
-</code></pre><p>result:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span><span class="cpf">&#34;tlpi_hdr.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">sigHandler</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Ouch!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">[],</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">j</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">sigHandler</span><span class="p">)</span> <span class="o">==</span> <span class="n">SIG_ERR</span><span class="p">)</span>
+        <span class="n">errExit</span><span class="p">(</span><span class="s">&#34;signal&#34;</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>result:</p>
 <pre><code>$ ./ouch
 0
 *Type Control-C*
@@ -185,10 +185,10 @@ Ouch!
 'Type Control-\'(the terminal quit char)
 Quit(core dumped)
 </code></pre><h2 id="發送訊號-kill">發送訊號 kill()</h2>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-int kill(pid_t pid, int sig);
-            Return 0 on success, or -1 on error
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">kill</span><span class="p">(</span><span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+            <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><ul>
 <li>若pid &gt; 0，會將訊號發給pid指定的行程</li>
 <li>若pid == 0，會將訊號發送至與呼叫的行程<strong>同一個群組的每一個行程</strong></li>
 <li>若pid &lt; -1，在行程群組ID與pid絕對值相同的行程群組中的每個行程都會收到此訊號</li>
@@ -208,35 +208,35 @@ int kill(pid_t pid, int sig);
 </ul>
 <h2 id="其他發送訊號的方式raisekillpg">其他發送訊號的方式：raise()、killpg()</h2>
 <p>發送訊號給自己</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-int raise(int sig);
-            Returns 0 on success, or nonzero on error
-</code></pre><p>等同於：<code>kill(gitpid(), sig);</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">raise</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+            <span class="n">Returns</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="n">nonzero</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><p>等同於：<code>kill(gitpid(), sig);</code></p>
 <hr>
 <p>送出一個訊號給一個行程群組裡的每個成員</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-int killpg(pid_t pgrp, int sig);
-                Return 0 on success, or -1 on error
-</code></pre><p>等同於：<code>kill(-pgrp, sig);</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">killpg</span><span class="p">(</span><span class="n">pid_t</span> <span class="n">pgrp</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+                <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><p>等同於：<code>kill(-pgrp, sig);</code></p>
 <h2 id="顯示訊號的說明">顯示訊號的說明</h2>
 <p>訊號的說明文字在sys_siglist陣列中，例如可以使用sys_siglist[SIGPIPE]，獲得訊號說明。但建議使用strsignal()函式。</p>
-<pre><code class="language-c=" data-lang="c=">#define _BSD_SOURCE
-#include&lt;signal.h&gt;
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define _BSD_SOURCE
+</span><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">extern</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="k">const</span> <span class="n">sys_siglist</span><span class="p">[];</span>
 
-extern const char *const sys_siglist[];
-
-#define _GNU_SOURCE
-#include&lt;string.h&gt;
-char *strsingnal(int sig);
-                Returns pointer to signal description string
-</code></pre><ul>
+<span class="cp">#define _GNU_SOURCE
+</span><span class="cp">#include</span><span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">char</span> <span class="o">*</span><span class="nf">strsingnal</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+                <span class="n">Returns</span> <span class="n">pointer</span> <span class="n">to</span> <span class="n">signal</span> <span class="n">description</span> <span class="n">string</span>
+</code></pre></div><ul>
 <li>會檢查sig的邊界，並傳回一個指標指向該訊號的說明字串，若此訊號編號無效，就會指向錯誤字串</li>
 <li>比起直接使用sys_siglist[] 的優點在於strsignal()是local-sensitive，因此訊號的說明會根據地域語言來呈現。</li>
 </ul>
 <p>psignal()顯示msg參數所指的字串，後面接著一個冒號，如同strsignal()一樣，也是local-sensitive。</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-void psignal(int sig, const char *msg);
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">psignal</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">msg</span><span class="p">);</span>
+</code></pre></div><ul>
 <li>strsignal() psigna() sys_siglist並未納入SUSv3的標準中，但許多UNIX的系統有這些功能（SUSv4已納入）</li>
 </ul>
 <h2 id="訊號集signal-set">訊號集(Signal Set)</h2>
@@ -245,37 +245,37 @@ void psignal(int sig, const char *msg);
 <h3 id="初始化訊號">初始化訊號</h3>
 <p>sigemptyset()初始化成一個未包含任何成員的訊號集
 sigfillset()初始化一個訊號集，使其包含全部的訊號</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-
-int sigemptyset(sigset_t *set);
-int sigfillset(sigset_t *set);
-                Return 0 on success, or -1 on error
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">sigemptyset</span><span class="p">(</span><span class="n">sigset_t</span> <span class="o">*</span><span class="n">set</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">sigfillset</span><span class="p">(</span><span class="n">sigset_t</span> <span class="o">*</span><span class="n">set</span><span class="p">);</span>
+                <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><ul>
 <li>一定要用其中一個函式來初始化一個訊號集，因為C語言不會對automatic variable進行初始化</li>
 <li>並且將靜態變數初始化為0的清空訊號集的方法不具可攜性，因此使用memset清空的方法也不可行</li>
 </ul>
 <p>初始化之後，可以使用sigaddset()、sigdelset()將訊號添加或者刪除</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-
-int sigaddset(const sigset_t *sig, int sig);
-int sigdelset(const sigset_t *sig, int sig);
-                    Return 0 on success, or -1 on error
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">sigaddset</span><span class="p">(</span><span class="k">const</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">sig</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">sigdelset</span><span class="p">(</span><span class="k">const</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">sig</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+                    <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><ul>
 <li>可以用sigismember()測試sig指定的訊號是否為set的成員</li>
 </ul>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-int sigismember(const sigset_t *set, int sig);
-                Return 1 if sig is a member of set, 0 if it is not, or -1 on error
-</code></pre><p>GNU C 函式庫實作了三個非標準函式</p>
-<pre><code class="language-c=" data-lang="c=">#define _GNU_SOURCE
-#include&lt;signal.h&gt;
-
-int sigandset(sigset_t *dest, sigset_t *left, sigset_t *right);
-int sigorset(sigset_t *dest, sigset_t *left, sigset_t *right);
-                        Return 0 on success, or -1 on error
-int sigisemptyset(sigset_t *set);
-                        Return 1 if set is empty, otherwise 0
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">sigismember</span><span class="p">(</span><span class="k">const</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">set</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+                <span class="n">Return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">sig</span> <span class="n">is</span> <span class="n">a</span> <span class="n">member</span> <span class="n">of</span> <span class="n">set</span><span class="p">,</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">it</span> <span class="n">is</span> <span class="n">not</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><p>GNU C 函式庫實作了三個非標準函式</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define _GNU_SOURCE
+</span><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">sigandset</span><span class="p">(</span><span class="n">sigset_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">left</span><span class="p">,</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">right</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">sigorset</span><span class="p">(</span><span class="n">sigset_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">left</span><span class="p">,</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">right</span><span class="p">);</span>
+                        <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+<span class="kt">int</span> <span class="n">sigisemptyset</span><span class="p">(</span><span class="n">sigset_t</span> <span class="o">*</span><span class="n">set</span><span class="p">);</span>
+                        <span class="n">Return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">set</span> <span class="n">is</span> <span class="n">empty</span><span class="p">,</span> <span class="n">otherwise</span> <span class="mi">0</span>
+</code></pre></div><ul>
 <li>sigandset()將left和right sets 交集 存在dest set中</li>
 <li>sigandset()將left和right sets 聯集 存在dest set中</li>
 <li>若set內沒有signal則sigisemptyset return 1</li>
@@ -288,10 +288,10 @@ int sigisemptyset(sigset_t *set);
 <li>使用sigaction()，可以指定一組要阻塞的額外訊號，handler會將其阻塞</li>
 <li>在任意時間點，sigprocmask()，直接將訊號新增(刪除)到signal mask</li>
 </ul>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
-                        Return 0 on success, or -1 on error
-</code></pre><ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">sigprocmask</span><span class="p">(</span><span class="kt">int</span> <span class="n">how</span><span class="p">,</span> <span class="k">const</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">set</span><span class="p">,</span> <span class="n">sigset_t</span> <span class="o">*</span><span class="n">oldset</span><span class="p">);</span>
+                        <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><ul>
 <li>how參數
 <ul>
 <li>SIG_BLOCK 會將mask設定為 現值<code>OR</code>set =&gt; 將set指向的signal set添加到mask中</li>
@@ -302,16 +302,16 @@ int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
 </ul>
 <h2 id="擱置的訊號-pending-signal">擱置的訊號 (Pending Signal)</h2>
 <p>行程收到一個目前被blocked的訊號，會加入pending signal set，可以用sigpending()來獲得行程目前的擱置訊號</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;signal.h&gt;
-int sigpending(sigset_t *set);
-                    Return 0 on success, or -1 on error
-</code></pre><h2 id="等待訊號-pause">等待訊號 pause()</h2>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">sigpending</span><span class="p">(</span><span class="n">sigset_t</span> <span class="o">*</span><span class="n">set</span><span class="p">);</span>
+                    <span class="n">Return</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="o">-</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span>
+</code></pre></div><h2 id="等待訊號-pause">等待訊號 pause()</h2>
 <p>會使process暫停執行，直到受到<strong>handler中斷</strong>為止，或是一個未經處理的訊號終止process</p>
-<pre><code class="language-c=" data-lang="c=">#include&lt;unistd.h&gt;
-
-int pause(void);
-            return -1 with errno set to EINTR
-</code></pre></div><div class="post-footer" id="post-footer">
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">pause</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="n">with</span> <span class="n">errno</span> <span class="n">set</span> <span class="n">to</span> <span class="n">EINTR</span>
+</code></pre></div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
