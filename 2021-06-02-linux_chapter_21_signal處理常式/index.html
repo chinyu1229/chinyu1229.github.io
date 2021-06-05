@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Linux Chapter 21 Signal 處理常式 - 攻城獅 world</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux Chapter 21 Signal 處理常式" />
+        <title>Linux Chapter 21 Signal 處理常式 - 攻城獅World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux Chapter 21 Signal 處理常式" />
 <meta property="og:description" content="Linux Chapter 21 Signal 處理常式 常式設計  設定一個全域flag，接著離開。主程式會週期性的檢測此flag，若有被設定為flag，會進行適當的反應 會做出幾種類型的清理動作，接著結束行程或使用非區域跳躍（nonlocal goto）解開unwind the stack，並將控制權交回給主程式（是先定義的位置）  可重入函式與非同步訊號安全函式 可重入與不可重入 訊號處理常式與multiple thread的概念有關，前者可能會在任意時間點非同步的中斷程式執行，所以主程式與訊號處理常式會變成在同一個行程中，2個獨立的thread(非同步執行) 若函式可以在同一個行程的各thread中同步且安全的執行，此函式稱為是可重入的（reentrant）
  SUSv3對可重入的定義是: 當兩條或多條thread呼叫函式時，即便是彼此互相交叉執行，也能保證效果與各thread以未定義順序呼叫時一致  若函式會更新全域或靜態的資料結構，可能就是不可重入的函式（只使用local變數的函式保證是可重入）。
  可能發生的情況： 若主程式在呼叫malloc()期間，受到一個同樣呼叫malloc()的訊號處理常式中斷，則此linklist可能會遭到破壞，因此malloc()的函式家族與使用這些函式的其他函式庫函式都是不可重入。 其他會傳回靜態配置的記憶體，也是不可重入的，crypt() getpwnam() gethostbyname() getservbyname() 函式的內部紀錄是使用靜態的資料結構也是不可重入的，例如scanf() printf()，他們會有緩衝的I/O更新內部資料結構，所以在訊號處理常式使用printf()也在主程式呼叫printf()，緩衝區的資料會交錯，導致得到非期望的輸出結果，甚至是整個程式crush  標準的非同步訊號安全函式（async-signal-safe functions）  指可以安全地從訊號處理常式進行呼叫。 當函式是reentrant函式，或是不會受到訊號處理常式中斷，可以稱函式為async-signal-safe function 我們不可以在訊號處理常式呼叫不安全的函式 man page: https://man7.org/linux/man-pages//man7/signal-safety.7.html  在訊號處理常式內使用errno 因為可能會更新errno變數，會導致函式reentrant，因為可能會覆寫主程式之前呼叫函式設定的errno值。 所以可以先儲存errno的值，並在函式執行完畢之後，回存errno
@@ -23,8 +23,8 @@
  SUSv3對可重入的定義是: 當兩條或多條thread呼叫函式時，即便是彼此互相交叉執行，也能保證效果與各thread以未定義順序呼叫時一致  若函式會更新全域或靜態的資料結構，可能就是不可重入的函式（只使用local變數的函式保證是可重入）。
  可能發生的情況： 若主程式在呼叫malloc()期間，受到一個同樣呼叫malloc()的訊號處理常式中斷，則此linklist可能會遭到破壞，因此malloc()的函式家族與使用這些函式的其他函式庫函式都是不可重入。 其他會傳回靜態配置的記憶體，也是不可重入的，crypt() getpwnam() gethostbyname() getservbyname() 函式的內部紀錄是使用靜態的資料結構也是不可重入的，例如scanf() printf()，他們會有緩衝的I/O更新內部資料結構，所以在訊號處理常式使用printf()也在主程式呼叫printf()，緩衝區的資料會交錯，導致得到非期望的輸出結果，甚至是整個程式crush  標準的非同步訊號安全函式（async-signal-safe functions）  指可以安全地從訊號處理常式進行呼叫。 當函式是reentrant函式，或是不會受到訊號處理常式中斷，可以稱函式為async-signal-safe function 我們不可以在訊號處理常式呼叫不安全的函式 man page: https://man7.org/linux/man-pages//man7/signal-safety.7.html  在訊號處理常式內使用errno 因為可能會更新errno變數，會導致函式reentrant，因為可能會覆寫主程式之前呼叫函式設定的errno值。 所以可以先儲存errno的值，並在函式執行完畢之後，回存errno
 1 2 3 4 5 6 7  void handler(int sig) { int sErrno; sErrno = errno; /* can execute a function that might modify errno */ errno = sErron; }   "/>
-<meta name="application-name" content="LoveIt">
-<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="application-name" content="攻城獅World">
+<meta name="apple-mobile-web-app-title" content="攻城獅World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/2021-06-02-linux_chapter_21_signal%E8%99%95%E7%90%86%E5%B8%B8%E5%BC%8F/" /><link rel="prev" href="http://chinyu1229.github.io/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
@@ -49,7 +49,7 @@
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="攻城獅 world"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>LoveIt</a>
+            <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>攻城獅World</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/categories/documentation/"> Docs </a><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
@@ -75,7 +75,7 @@
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="攻城獅 world"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>LoveIt</a>
+                <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>攻城獅World</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>

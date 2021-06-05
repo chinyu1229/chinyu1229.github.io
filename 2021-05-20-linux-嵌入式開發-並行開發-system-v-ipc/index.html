@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Linux 嵌入式開發 – 並行開發—SystemV IPC - 攻城獅 world</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux 嵌入式開發 – 並行開發—SystemV IPC" />
+        <title>Linux 嵌入式開發 – 並行開發—SystemV IPC - 攻城獅World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux 嵌入式開發 – 並行開發—SystemV IPC" />
 <meta property="og:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash; System V IPC System V IPC  包含共享內存、消息對列、和信號燈集 每個IPC對象有唯一的ID IPC對象創建後一直存在，直到被顯式的刪除（主動刪除） 每個IPC對象有一個關聯的KEY ipcs / ipcrm 實現進程間通訊  Key ftok 1 2 3  #include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;key_t ftok(const char *path,int proj_id);    成功時返回合法的key值，失敗時返回EOF path存在且可以被訪問文件的路徑 proj_id 用於生成key的數字，不能為0  範例 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;#include&lt;unistd.h&gt; int main(int argc, char *argv[]) { key_t key; if((key = ftok(&#34;.&#34;,&#39;a&#39;)) == -1) { perror(&#34;key&#34;); exit(-1); } }   共享內存  是一種最高校的進程間通信方式，進程可以直接讀寫內存，而不需要任何數據的拷貝 在內核空間創建，可以被進程映射到用戶空間訪問，使用靈活 由於多個進程可以同時訪問共享內存，印此需要同步和互斥機制配合使用  使用步驟  創建/打開共享內存 映射共享內存，即把指定的共享內存映射到進程的地址空間用於訪問 讀寫共享內存 撤銷共享內存映射 刪除共享內存對象  創建 1 2 3  #include&lt;sys/ipc." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
@@ -17,8 +17,8 @@
 
 <meta name="twitter:title" content="Linux 嵌入式開發 – 並行開發—SystemV IPC"/>
 <meta name="twitter:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash; System V IPC System V IPC  包含共享內存、消息對列、和信號燈集 每個IPC對象有唯一的ID IPC對象創建後一直存在，直到被顯式的刪除（主動刪除） 每個IPC對象有一個關聯的KEY ipcs / ipcrm 實現進程間通訊  Key ftok 1 2 3  #include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;key_t ftok(const char *path,int proj_id);    成功時返回合法的key值，失敗時返回EOF path存在且可以被訪問文件的路徑 proj_id 用於生成key的數字，不能為0  範例 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;#include&lt;unistd.h&gt; int main(int argc, char *argv[]) { key_t key; if((key = ftok(&#34;.&#34;,&#39;a&#39;)) == -1) { perror(&#34;key&#34;); exit(-1); } }   共享內存  是一種最高校的進程間通信方式，進程可以直接讀寫內存，而不需要任何數據的拷貝 在內核空間創建，可以被進程映射到用戶空間訪問，使用靈活 由於多個進程可以同時訪問共享內存，印此需要同步和互斥機制配合使用  使用步驟  創建/打開共享內存 映射共享內存，即把指定的共享內存映射到進程的地址空間用於訪問 讀寫共享內存 撤銷共享內存映射 刪除共享內存對象  創建 1 2 3  #include&lt;sys/ipc."/>
-<meta name="application-name" content="LoveIt">
-<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="application-name" content="攻城獅World">
+<meta name="apple-mobile-web-app-title" content="攻城獅World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/" /><link rel="prev" href="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/" /><link rel="next" href="http://chinyu1229.github.io/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
@@ -43,7 +43,7 @@
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="攻城獅 world"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>LoveIt</a>
+            <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>攻城獅World</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/categories/documentation/"> Docs </a><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
@@ -69,7 +69,7 @@
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="攻城獅 world"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>LoveIt</a>
+                <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>攻城獅World</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
