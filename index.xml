@@ -1,85 +1,92 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>攻城獅</title>
+        <title>攻城獅 world</title>
         <link>http://chinyu1229.github.io/</link>
-        <description>攻城獅</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 29 May 2021 23:10:12 &#43;0800</lastBuildDate>
+        <description>About LoveIt Theme</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 02 Jun 2021 22:10:12 &#43;0800</lastBuildDate>
             <atom:link href="http://chinyu1229.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Linux Chapter 21 Signal 處理常式</title>
+    <link>http://chinyu1229.github.io/2021-06-02-linux_chapter_21_signal%E8%99%95%E7%90%86%E5%B8%B8%E5%BC%8F/</link>
+    <pubDate>Wed, 02 Jun 2021 22:10:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-06-02-linux_chapter_21_signal%E8%99%95%E7%90%86%E5%B8%B8%E5%BC%8F/</guid>
+    <description><![CDATA[Linux Chapter 21 Signal 處理常式 常式設計  設定一個全域flag，接著離開。主程式會週期性的檢測此flag，若有被設定為flag，會進行適當的反應 會做出幾種類型的清理動作，接著結束行程或使用非區域跳躍（nonlocal goto）解開unwind the stack，並將控制權交回給主程式（是先定義的位置）  可重入函式與非同步訊號安全函式 可重入與不可重入 訊號處理常式與multiple thread的概念有關，前者可能會在任意時間點非同步的中斷程式執行，所以主程式與訊號處理常式會變成在同一個行程中，2個獨立的thread(非同步執行) 若函式可以在同一個行程的各thread中同步且安全的執行，此函式稱為是可重入的（reentrant）
+ SUSv3對可重入的定義是: 當兩條或多條thread呼叫函式時，即便是彼此互相交叉執行，也能保證效果與各thread以未定義順序呼叫時一致  若函式會更新全域或靜態的資料結構，可能就是不可重入的函式（只使用local變數的函式保證是可重入）。
+ 可能發生的情況： 若主程式在呼叫malloc()期間，受到一個同樣呼叫malloc()的訊號處理常式中斷，則此linklist可能會遭到破壞，因此malloc()的函式家族與使用這些函式的其他函式庫函式都是不可重入。 其他會傳回靜態配置的記憶體，也是不可重入的，crypt() getpwnam() gethostbyname() getservbyname() 函式的內部紀錄是使用靜態的資料結構也是不可重入的，例如scanf() printf()，他們會有緩衝的I/O更新內部資料結構，所以在訊號處理常式使用printf()也在主程式呼叫printf()，緩衝區的資料會交錯，導致得到非期望的輸出結果，甚至是整個程式crush  標準的非同步訊號安全函式（async-signal-safe functions）  指可以安全地從訊號處理常式進行呼叫。 當函式是reentrant函式，或是不會受到訊號處理常式中斷，可以稱函式為async-signal-safe function 我們不可以在訊號處理常式呼叫不安全的函式 man page: https://man7.org/linux/man-pages//man7/signal-safety.7.html  在訊號處理常式內使用errno 因為可能會更新errno變數，會導致函式reentrant，因為可能會覆寫主程式之前呼叫函式設定的errno值。 所以可以先儲存errno的值，並在函式執行完畢之後，回存errno
+1 2 3 4 5 6 7  void handler(int sig) { int sErrno; sErrno = errno; /* can execute a function that might modify errno */ errno = sErron; }   ]]></description>
+</item><item>
     <title>Linux Chapter 20 Signal 基本概念</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</link>
+    <link>http://chinyu1229.github.io/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</link>
     <pubDate>Sat, 29 May 2021 23:10:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</guid>
+    <guid>http://chinyu1229.github.io/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</guid>
     <description><![CDATA[Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
 行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
 訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
- signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error  handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
-#include&lt;signal.h&gt;#include&#34;tlpi_hdr.h&#34; static void sigHandler(int sig) { printf(&#34;Ouch!\n&#34;); } int main(int argc[], char *argv[]) { int j; if(signal(SIGINT, sigHandler) == SIG_ERR) errExit(&#34;signal&#34;); for(j = 0;;j++) { printf(&#34;%d\n&#34;, j); sleep(3); } } result:]]></description>
+ signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  1 2 3  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error    handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  #include&lt;signal.]]></description>
 </item><item>
     <title>Linux 嵌入式開發 – 並行開發—SystemV IPC</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</link>
+    <link>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</link>
     <pubDate>Thu, 20 May 2021 01:12:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</guid>
-    <description><![CDATA[Linux 嵌入式開發 &ndash; 並行開發&mdash; System V IPC System V IPC  包含共享內存、消息對列、和信號燈集 每個IPC對象有唯一的ID IPC對象創建後一直存在，直到被顯式的刪除（主動刪除） 每個IPC對象有一個關聯的KEY ipcs / ipcrm 實現進程間通訊  Key ftok #include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;key_t ftok(const char *path,int proj_id);  成功時返回合法的key值，失敗時返回EOF path存在且可以被訪問文件的路徑 proj_id 用於生成key的數字，不能為0  範例 #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;#include&lt;unistd.h&gt; int main(int argc, char *argv[]) { key_t key; if((key = ftok(&#34;.&#34;,&#39;a&#39;)) == -1) { perror(&#34;key&#34;); exit(-1); } } 共享內存  是一種最高校的進程間通信方式，進程可以直接讀寫內存，而不需要任何數據的拷貝 在內核空間創建，可以被進程映射到用戶空間訪問，使用靈活 由於多個進程可以同時訪問共享內存，印此需要同步和互斥機制配合使用  使用步驟  創建/打開共享內存 映射共享內存，即把指定的共享內存映射到進程的地址空間用於訪問 讀寫共享內存 撤銷共享內存映射 刪除共享內存對象  創建 #include&lt;sys/ipc.h&gt;#include&lt;sys/shm.h&gt;int shmget(key_t key, int size, int shmflg);  成功時返回共享內存的id，失敗時返回EOF key和共享內存關聯的key, IPC_PRIVATE或ftok生成 shmflg共享內存標誌位 IPC_CREAT|0666  範例：創建一個私有的共享內存，大小為512 bytes,權限0666]]></description>
+    <guid>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</guid>
+    <description><![CDATA[Linux 嵌入式開發 &ndash; 並行開發&mdash; System V IPC System V IPC  包含共享內存、消息對列、和信號燈集 每個IPC對象有唯一的ID IPC對象創建後一直存在，直到被顯式的刪除（主動刪除） 每個IPC對象有一個關聯的KEY ipcs / ipcrm 實現進程間通訊  Key ftok 1 2 3  #include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;key_t ftok(const char *path,int proj_id);    成功時返回合法的key值，失敗時返回EOF path存在且可以被訪問文件的路徑 proj_id 用於生成key的數字，不能為0  範例 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;#include&lt;unistd.h&gt; int main(int argc, char *argv[]) { key_t key; if((key = ftok(&#34;.&#34;,&#39;a&#39;)) == -1) { perror(&#34;key&#34;); exit(-1); } }   共享內存  是一種最高校的進程間通信方式，進程可以直接讀寫內存，而不需要任何數據的拷貝 在內核空間創建，可以被進程映射到用戶空間訪問，使用靈活 由於多個進程可以同時訪問共享內存，印此需要同步和互斥機制配合使用  使用步驟  創建/打開共享內存 映射共享內存，即把指定的共享內存映射到進程的地址空間用於訪問 讀寫共享內存 撤銷共享內存映射 刪除共享內存對象  創建 1 2 3  #include&lt;sys/ipc.]]></description>
 </item><item>
     <title>Linux 嵌入式開發 – 並行開發—Unix進程間的通訊方式</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/</link>
+    <link>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/</link>
     <pubDate>Thu, 20 May 2021 01:11:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/</guid>
+    <guid>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/</guid>
     <description><![CDATA[Linux 嵌入式開發 &ndash; 並行開發&mdash; Unix進程間的通訊方式 Process間通訊介紹 早期：
  pipe fifo signal  System V IPC
  share memory message queue semphore set  &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;本地通信↑
 &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;本地/網路通信↓ Linux
- socket  無名管道  只能用於有親緣關係的進程之間的通信 單工的通信模式，具有固定的讀端和寫端 創建時返回兩個文件描述符，分別用於讀寫管道  創建 - pipe #include&lt;unistd.h&gt;int pipe(int pfd[2]);  成功時返回0，失敗時返回EOF pfd 包含兩個元素的int 陣列，用來保存文件描述符 pfd[0]用於read管道，pfd[1]用於write管道  範例 子進程1和2分別往管道寫入字串，父進程讀管道內容並打印
-#include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;unistd.h&gt;#include&lt;sys/types.h&gt; int main() { pid_t pid1, pid2; // save return value of fork()  char buf[32]; int pfd[2]; if(pipe(pfd)&lt;0) { perror(&#34;pipe&#34;); exit(-1); } if((pid1 == fork()) &lt; 0 ) { perror(&#34;fork&#34;); exit(-1); } else if(pid1 == 0) // child process1  { strcpy(buf,&#34;process1&#34;); write(pfd[1],buf,32); exit(0); } else // parents process  { if((pid2 = fork()) &lt; 0) { perror(&#34;fork&#34;); exit(-1); } else if(pid == 0) // child process 2  { sleep(1); strcpy(buf,&#34;process2&#34;); write(pfd[1],buf,32); } else { wait(NULL); read(pfd[0],buf,32); printf(&#34;%s\n&#34;,buf); wait(NULL); read(pfd[0],buf,32); printf(&#34;%s\n&#34;,buf); } } return 0; } 讀無名管道   寫端存在]]></description>
+ socket  無名管道  只能用於有親緣關係的進程之間的通信 單工的通信模式，具有固定的讀端和寫端 創建時返回兩個文件描述符，分別用於讀寫管道  創建 - pipe 1 2  #include&lt;unistd.h&gt;int pipe(int pfd[2]);    成功時返回0，失敗時返回EOF pfd 包含兩個元素的int 陣列，用來保存文件描述符 pfd[0]用於read管道，pfd[1]用於write管道  範例 子進程1和2分別往管道寫入字串，父進程讀管道內容並打印
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52  #include&lt;stdio.]]></description>
 </item><item>
     <title>Linux 嵌入式開發 – 並行開發—進程與線程</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/</link>
+    <link>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/</link>
     <pubDate>Thu, 20 May 2021 01:10:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/</guid>
+    <guid>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/</guid>
     <description><![CDATA[Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 process - | 正文段 |&mdash;&mdash;&ndash; &mdash;&mdash;&mdash; | 用戶數據段 |&mdash;-program &mdash;&mdash;&mdash; | 系統數據段 |
 Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  Thread  process在切換時系統開銷大 同一個process中的thread共享相同的空間 Linux 不區分thread process  特點  通常thread指的是共享地址空間的多個任務 大大提高了任務切換的效率 避免額外的TLB &amp; cache的刷新  thread共享：]]></description>
 </item><item>
     <title>Linux Chapter 13 - 檔案IO緩衝區</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/</link>
+    <link>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/</link>
     <pubDate>Thu, 20 May 2021 01:04:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/</guid>
+    <guid>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/</guid>
     <description><![CDATA[檔案I/O緩衝區 The Linux programming interface chapter 13
 核心緩衝區概述 system call read() &amp; write()在操作磁碟檔案時不會直接對磁碟存取，而是單純在使用者空間緩衝區與核心緩衝區快取（kernel buffer cache）之間複製資料。 例如： write(fd, &quot;abc&quot;,3) 在後續的某個時間點，核心會將其緩衝區的資料寫入磁碟
 如果在此期間，另外一個process試圖讀取檔案的這幾個bytes，則核心將自動從緩衝區提供資料，而不是從檔案讀取。同理於read()期間有write() process的情況
 緩衝區大小對效能的影響  system cpu time：主要是測量使用者空間與核心空間之間資料傳輸所消耗的時間  包含CPU的處理, 等待I/O I/O的處理,作業系統處理提供一些服務額外的時間，以及系統閒置的時間   Elapsed time : 完整的程式在這個系統裡面執行的時間  當緩衝區大小為1byte，需要呼叫大約一億次的system call，而緩衝區大小為4096bytes時，system call次數約為24000，當超過此設定值，效能的改善就開始不明顯，是因為在使用者空間和核心空間之間複製資料以及執行實際I/O所需的時間相較之下，read()和write()的system call 成本就顯得微不足道。
 ＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
 stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
-設定一個stdio stream的緩衝模式 #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size); 在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
- 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !]]></description>
+設定一個stdio stream的緩衝模式 1 2  #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size);   在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !]]></description>
 </item><item>
     <title>Linux Chapter 5 - 檔案IO深入探討</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</link>
+    <link>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</link>
     <pubDate>Thu, 20 May 2021 01:03:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</guid>
+    <guid>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</guid>
     <description><![CDATA[檔案I/O深入探討 原子與競速條件 以互斥的方式建立檔案 在open()中設定O_EXCL與O_CREAT可以在檔案已存在的時候回傳錯誤，確保process本身是檔案的建立者
 將資料附加到檔案 當我們有多個process要增加資料到同一個檔案 會有下列這種寫法
-if(lseek(fd,0,SEEK_END)==-1) errExit(&#34;lseek&#34;); if(write(fd, buf, len)!=len) fatal(&#34;Partial/failed write&#34;); 會有race condtion問題，第一個process在lseek()與write()之間被第二個相同的行程中斷，那兩個行程會在寫入之前將他們的file offset設定到相同位置，因此會產生互相覆蓋的現象
- 為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error 用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
-int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;); 可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag
-if(flags &amp; O_SYNC) printf(&#34;write are synchronized\n&#34;); 若要檢查檔案的access mode,必須使用如下的操作
-accessMode = flags &amp; O_ACCMODE; if(accessMode == O_WRONLY || accessMode == O_RDWR) printf(&#34;file is writable\n&#34;);  詳細的原因可以參考書p.]]></description>
+1 2 3 4  if(lseek(fd,0,SEEK_END)==-1) errExit(&#34;lseek&#34;); if(write(fd, buf, len)!=len) fatal(&#34;Partial/failed write&#34;);   會有race condtion問題，第一個process在lseek()與write()之間被第二個相同的行程中斷，那兩個行程會在寫入之前將他們的file offset設定到相同位置，因此會產生互相覆蓋的現象
+ 為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 1 2 3  #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error   用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
+1 2 3  int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;);   可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag]]></description>
 </item><item>
     <title>Linux Chapter 4 - 檔案IO</title>
-    <link>http://chinyu1229.github.io/posts/2021-05-19-%E6%AA%94%E6%A1%88io/</link>
+    <link>http://chinyu1229.github.io/2021-05-19-%E6%AA%94%E6%A1%88io/</link>
     <pubDate>Wed, 19 May 2021 17:40:12 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://chinyu1229.github.io/posts/2021-05-19-%E6%AA%94%E6%A1%88io/</guid>
+    <guid>http://chinyu1229.github.io/2021-05-19-%E6%AA%94%E6%A1%88io/</guid>
     <description><![CDATA[檔案I/O 概述 全部執行I/O的系統呼叫都是透過檔案描述符來控制開啟的檔案，各類型的檔案在開啟之後，都能以檔案描述符進行操控。
 標準檔案符 shell平時會將以下三個檔案描述符保持一直開啟，可以使用I/O redirection進行適當的修改
    file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
-#include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CTEATflags可以省略）
- 由於flags各個參數互相獨立（除了必選項不可重複）皆可以使用|來新增性質  必選項：以下三個常數中必須指定一個，且僅允許指定一個。    flags 用途     O_RDONLY 以唯讀模式開啟   O_WRONLY 以唯寫模式開啟   O_RDWR 以讀寫模式開啟    以可讀寫方式打開文件。上述三種旗標是互斥的，也就是不可同時使用，但可與下列的旗標利用OR(|)運算符組合。]]></description>
+1 2 3 4 5  #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error   flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CTEATflags可以省略）]]></description>
 </item></channel>
 </rss>
