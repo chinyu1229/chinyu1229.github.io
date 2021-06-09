@@ -9,7 +9,7 @@
 <meta property="og:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 process - | 正文段 |&mdash;&mdash;&ndash; &mdash;&mdash;&mdash; | 用戶數據段 |&mdash;-program &mdash;&mdash;&mdash; | 系統數據段 |
 Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  Thread  process在切換時系統開銷大 同一個process中的thread共享相同的空間 Linux 不區分thread process  特點  通常thread指的是共享地址空間的多個任務 大大提高了任務切換的效率 避免額外的TLB &amp; cache的刷新  thread共享：" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="og:url" content="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-20T01:10:12&#43;08:00" />
 <meta property="article:modified_time" content="2021-05-20T01:10:12&#43;08:00" />
 
@@ -19,10 +19,10 @@ Process control block  PID process user process status / priority file descripti
 <meta name="twitter:title" content="Linux 嵌入式開發 – 並行開發—進程與線程"/>
 <meta name="twitter:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 process - | 正文段 |&mdash;&mdash;&ndash; &mdash;&mdash;&mdash; | 用戶數據段 |&mdash;-program &mdash;&mdash;&mdash; | 系統數據段 |
 Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  Thread  process在切換時系統開銷大 同一個process中的thread共享相同的空間 Linux 不區分thread process  特點  通常thread指的是共享地址空間的多個任務 大大提高了任務切換的效率 避免額外的TLB &amp; cache的刷新  thread共享："/>
-<meta name="application-name" content="攻城獅World">
-<meta name="apple-mobile-web-app-title" content="攻城獅World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="application-name" content="Wandering World">
+<meta name="apple-mobile-web-app-title" content="Wandering World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><link rel="prev" href="http://chinyu1229.github.io/%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><link rel="next" href="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><link rel="prev" href="http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><link rel="next" href="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -30,9 +30,9 @@ Process control block  PID process user process status / priority file descripti
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http:\/\/chinyu1229.github.io\/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B\/"
+            "@id": "http:\/\/chinyu1229.github.io\/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B\/"
         },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  706 ,
-        "url": "http:\/\/chinyu1229.github.io\/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B\/","datePublished": "2021-05-20T01:10:12+08:00","dateModified": "2021-05-20T01:10:12+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        "url": "http:\/\/chinyu1229.github.io\/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B\/","datePublished": "2021-05-20T01:10:12+08:00","dateModified": "2021-05-20T01:10:12+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": "http:\/\/chinyu1229.github.io\/images\/avatar.png"},"author": {
                 "@type": "Person",
@@ -45,10 +45,10 @@ Process control block  PID process user process status / priority file descripti
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>攻城獅World</a>
+            <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Wandering World</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/categories/documentation/"> Docs </a><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/categories/documentation/"> Docs </a><a class="menu-item" href="/about/"> About </a><a class="menu-item" href="https://github.com/chinyu1229" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
                             <i class="fas fa-search fa-fw"></i>
@@ -69,7 +69,7 @@ Process control block  PID process user process status / priority file descripti
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>攻城獅World</a>
+                <a href="/" title="攻城獅World"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Wandering World</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -91,7 +91,7 @@ Process control block  PID process user process status / priority file descripti
                     <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
                         Cancel
                     </a>
-                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/categories/documentation/" title="">Docs</a><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/categories/documentation/" title="">Docs</a><a class="menu-item" href="/about/" title="">About</a><a class="menu-item" href="https://github.com/chinyu1229" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
                 <i class="fas fa-adjust fa-fw"></i>
             </a></div>
     </div>
@@ -109,7 +109,7 @@ Process control block  PID process user process status / priority file descripti
         </div><article class="page single"><h1 class="single-title animated flipInX">Linux 嵌入式開發 – 並行開發—進程與線程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linux_%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC/"><i class="far fa-folder fa-fw"></i>Linux_嵌入式開發</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-20">2021-05-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;706 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;<span id="/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" class="leancloud_visitors" data-flag-title="Linux 嵌入式開發 – 並行開發—進程與線程">
+                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;<span id="/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" class="leancloud_visitors" data-flag-title="Linux 嵌入式開發 – 並行開發—進程與線程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -847,10 +847,10 @@ gcc -o test test.c -lpthread</p>
         </div>
         <div class="post-info-line">
             <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/index.md" target="_blank">Read Markdown</a>
+                            <a class="link-to-markdown" href="/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/index.md" target="_blank">Read Markdown</a>
                         </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程" data-via="xxxx"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://chinyu1229.github.io/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i class="fab fa-weibo fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" data-title="Linux 嵌入式開發 – 並行開發—進程與線程"><i class="fab fa-weibo fa-fw"></i></a></span>
             </div>
         </div>
     </div>
@@ -862,15 +862,15 @@ gcc -o test test.c -lpthread</p>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" class="prev" rel="prev" title="Linux Chapter 13 - 檔案IO緩衝區"><i class="fas fa-angle-left fa-fw"></i>Linux Chapter 13 - 檔案IO緩衝區</a>
-            <a href="/linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/" class="next" rel="next" title="Linux 嵌入式開發 – 並行開發—Unix進程間的通訊方式">Linux 嵌入式開發 – 並行開發—Unix進程間的通訊方式<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" class="prev" rel="prev" title="Linux Chapter 13 - 檔案IO緩衝區"><i class="fas fa-angle-left fa-fw"></i>Linux Chapter 13 - 檔案IO緩衝區</a>
+            <a href="/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/" class="next" rel="next" title="Linux 嵌入式開發 – 並行開發—Unix進程間的通訊方式">Linux 嵌入式開發 – 並行開發—Unix進程間的通訊方式<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xxxx</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Chinyu</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
