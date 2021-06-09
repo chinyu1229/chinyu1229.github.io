@@ -1,0 +1,18 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Linux - Category - 攻城獅World</title>
+        <link>http://chinyu1229.github.io/categories/linux/</link>
+        <description>Linux - Category - 攻城獅World</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 29 May 2021 23:10:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/linux/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux Chapter 20 Signal 基本概念</title>
+    <link>http://chinyu1229.github.io/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</link>
+    <pubDate>Sat, 29 May 2021 23:10:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</guid>
+    <description><![CDATA[Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
+行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
+訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
+ signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  1 2 3  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error    handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  #include&lt;signal.]]></description>
+</item></channel>
+</rss>
