@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Documentation - Category - 攻城獅World</title>
+        <title>Documentation - Category - Wandering World</title>
         <link>http://chinyu1229.github.io/categories/documentation/</link>
-        <description>Documentation - Category - 攻城獅World</description>
+        <description>Documentation - Category - Wandering World</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
             <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><atom:link href="http://chinyu1229.github.io/categories/documentation/" rel="self" type="application/rss+xml" /></channel>
 </rss>

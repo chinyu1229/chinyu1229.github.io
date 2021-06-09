@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Linux - Category - 攻城獅World</title>
+        <title>Linux - Category - Wandering World</title>
         <link>http://chinyu1229.github.io/categories/linux/</link>
-        <description>Linux - Category - 攻城獅World</description>
+        <description>Linux - Category - Wandering World</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
             <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 02 Jun 2021 22:10:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/linux/" rel="self" type="application/rss+xml" /><item>
     <title>Linux Chapter 21 Signal 處理常式</title>
