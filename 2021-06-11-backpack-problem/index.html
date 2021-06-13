@@ -7,7 +7,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>Backpack_Problem - Wandering World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Backpack_Problem" />
 <meta property="og:description" content="Backpack 0 - 1 Problem  主問題：從n個物品選一些物品，在不超過最大容量下，使得價值最大。 解空間：{x1,x2&hellip;.,xn}  xi : 0 or 1 (表示取或不取) 共有 $2^n$ 可能的解   限制條件： $\sum_{i=1}^n$ $w_ix_i$ &lt;= W 採用回溯法 限界條件：  對於任何一個中間節點z，從root到z的分支所代表的狀態已經確定，從z到子孫的節點還未確定。如果z在第t層，說明第1種物品到t-1種物品（是否裝入背包）確定，t可以沿著分支擴展確認狀態，t&#43;1到n不確定。 目前裝入背包的物品總價用cp表示，因為還不確定t&#43;1到n物品的狀態，先假設全部都放入背包，也就是剩餘的總價值，用rp表示。 cp &#43; rp是所有從root出發經過中間節點z的可行解的價值上界。如果價值上界小於或等於目前的最優值，則說明節點z沒有繼續搜尋的必要 即 cp &#43; rp &gt; bestp    solution 假設有4個物品，每個物品w [2,5,4,2], 價值v [6,3,5,4], W = 10
- 初始化：sumw , sumv 統計所有物品的總重和總價 -&gt; sumw = 13, sumw = 18,目前放入背包的物品重量cw = 0, 總價cp = 0, 最優值 bestp = 0 第一層：t = 1,  判斷cw &#43; w[1] = 2 &lt; W （滿足限制條件）向左擴展分支，令x[1] = 1, cw = cw &#43; w[1] = 2, cp = cp&#43;v[1] = 6     " />
+ 初始化：sumw , sumv 統計所有物品的總重和總價 -&gt; sumw = 13, sumw = 18,目前放入背包的物品重量cw = 0, 總價cp = 0, 最優值 bestp = 0 第一層：t = 1,   判斷cw &#43; w[1] = 2 &lt; W （滿足限制條件）向左擴展分支，令x[1] = 1, cw = cw &#43; w[1] = 2, cp = cp&#43;v[1] = 6，生成2好節點" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://chinyu1229.github.io/2021-06-11-backpack-problem/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-06-10T00:48:12&#43;08:00" />
@@ -18,7 +18,7 @@
 
 <meta name="twitter:title" content="Backpack_Problem"/>
 <meta name="twitter:description" content="Backpack 0 - 1 Problem  主問題：從n個物品選一些物品，在不超過最大容量下，使得價值最大。 解空間：{x1,x2&hellip;.,xn}  xi : 0 or 1 (表示取或不取) 共有 $2^n$ 可能的解   限制條件： $\sum_{i=1}^n$ $w_ix_i$ &lt;= W 採用回溯法 限界條件：  對於任何一個中間節點z，從root到z的分支所代表的狀態已經確定，從z到子孫的節點還未確定。如果z在第t層，說明第1種物品到t-1種物品（是否裝入背包）確定，t可以沿著分支擴展確認狀態，t&#43;1到n不確定。 目前裝入背包的物品總價用cp表示，因為還不確定t&#43;1到n物品的狀態，先假設全部都放入背包，也就是剩餘的總價值，用rp表示。 cp &#43; rp是所有從root出發經過中間節點z的可行解的價值上界。如果價值上界小於或等於目前的最優值，則說明節點z沒有繼續搜尋的必要 即 cp &#43; rp &gt; bestp    solution 假設有4個物品，每個物品w [2,5,4,2], 價值v [6,3,5,4], W = 10
- 初始化：sumw , sumv 統計所有物品的總重和總價 -&gt; sumw = 13, sumw = 18,目前放入背包的物品重量cw = 0, 總價cp = 0, 最優值 bestp = 0 第一層：t = 1,  判斷cw &#43; w[1] = 2 &lt; W （滿足限制條件）向左擴展分支，令x[1] = 1, cw = cw &#43; w[1] = 2, cp = cp&#43;v[1] = 6     "/>
+ 初始化：sumw , sumv 統計所有物品的總重和總價 -&gt; sumw = 13, sumw = 18,目前放入背包的物品重量cw = 0, 總價cp = 0, 最優值 bestp = 0 第一層：t = 1,   判斷cw &#43; w[1] = 2 &lt; W （滿足限制條件）向左擴展分支，令x[1] = 1, cw = cw &#43; w[1] = 2, cp = cp&#43;v[1] = 6，生成2好節點"/>
 <meta name="application-name" content="Wandering World">
 <meta name="apple-mobile-web-app-title" content="Wandering World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/chinyu1229.github.io\/2021-06-11-backpack-problem\/"
-        },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  87 ,
+        },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  274 ,
         "url": "http:\/\/chinyu1229.github.io\/2021-06-11-backpack-problem\/","datePublished": "2021-06-10T00:48:12+08:00","dateModified": "2021-06-11T01:49:41+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,8 +113,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Backpack_Problem</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-category">included in <a href="/categories/algorithm/"><i class="far fa-folder fa-fw"></i>Algorithm</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-10">2021-06-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;87 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;One minute&nbsp;<span id="/2021-06-11-backpack-problem/" class="leancloud_visitors" data-flag-title="Backpack_Problem">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-10">2021-06-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;274 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;<span id="/2021-06-11-backpack-problem/" class="leancloud_visitors" data-flag-title="Backpack_Problem">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -125,6 +125,9 @@
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#solution">solution</a></li>
+    <li><a href="#code">Code</a></li>
+    <li><a href="#bound">bound()</a></li>
+    <li><a href="#backtrack">Backtrack</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h1 id="backpack-0---1-problem">Backpack 0 - 1 Problem</h1>
@@ -153,12 +156,131 @@
 <li>初始化：sumw , sumv 統計所有物品的總重和總價 -&gt; sumw = 13, sumw = 18,目前放入背包的物品重量cw = 0, 總價cp = 0, 最優值 bestp = 0</li>
 <li>第一層：t = 1,
 <ul>
-<li>判斷cw + w[1] = 2 &lt; W （滿足限制條件）向左擴展分支，令x[1] = 1, cw = cw + w[1] = 2, cp = cp+v[1] = 6</li>
-<li><img src="pic1.png" width = "70%" /></li>
+<li>
+<p>判斷cw + w[1] = 2 &lt; W （滿足限制條件）向左擴展分支，令x[1] = 1, cw = cw + w[1] = 2, cp = cp+v[1] = 6，生成2好節點</p>
+</li>
+<li>
+<p><img src="pic1.png" width = "70%" /></p>
+</li>
+<li>
+<p>&hellip;.以此類推</p>
+</li>
+<li>
+<p>到t = 3, cw + w[3] = 11 &gt; W, 因此不能放入，要判斷bound(t+1) <strong>&lt;是否需要剪枝&gt;</strong> rp(剩餘價值) = 4, cp + rp = 13 &gt; bestp, 所以擴展右子樹，生成4號節點</p>
+</li>
+<li>
+<p>&hellip;.</p>
+</li>
+<li>
+<p>t = 5 ， t &gt; n ，表示已經擴展到最底部（沒有物品了），5號擴展完畢，bestx[]保存目前的最優解</p>
+</li>
+<li>
+<p>回溯到4號節點，回溯需要 cw = cw - w[4] = 7, cp = cp - v[4] = 9，因為4號右邊子樹沒生成過，先判斷bound(t+1) 是否大於bestp，若無則繼續回溯，4號擴展完畢，回到3號，發現都左右考察過，再次回溯到2號。</p>
+</li>
+<li>
+<p>2號右子樹沒有考察過，bound(3) &gt; bestp，擴展右邊，x[2] = 0，生成6號節點</p>
+</li>
+<li>
+<p>&hellip;..往下看圖解</p>
+</li>
+<li>
+<p>參考&lt;趣學演算法&gt;</p>
+<ol>
+<li><img src="backpack1.jpeg" width = "70%" /></li>
+<li><img src="backpack2.jpeg" width = "70%" /></li>
+<li><img src="backpack3.jpeg" width = "70%" /></li>
+<li><img src="backpack4.jpeg" width = "70%" /></li>
+<li><img src="backpack5.jpeg" width = "70%" /></li>
+</ol>
+</li>
 </ul>
 </li>
 </ol>
-</div><div class="post-footer" id="post-footer">
+<h2 id="code">Code</h2>
+<p>實現function。參數可依照習慣新增或減少，或是變數用全域宣告</p>
+<h2 id="bound">bound()</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">double</span> <span class="nf">Bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">rp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span> <span class="c1">// n goods
+</span><span class="c1"></span>    <span class="p">{</span>
+        <span class="n">rp</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">i</span> <span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">cp</span> <span class="o">+</span> <span class="n">rp</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="backtrack">Backtrack</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">Backtrack</span><span class="p">(</span><span class="kt">int</span> <span class="n">t</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">bestx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+        <span class="n">bestp</span> <span class="o">=</span> <span class="n">cp</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">cw</span> <span class="o">+</span> <span class="n">w</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">W</span><span class="p">)</span> <span class="c1">// search left subtree
+</span><span class="c1"></span>    <span class="p">{</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">cw</span> <span class="o">+=</span> <span class="n">w</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+        <span class="n">cp</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+        <span class="n">Backtrack</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">cw</span> <span class="o">-=</span> <span class="n">w</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+        <span class="n">cp</span> <span class="o">-=</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">Bound</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">bestp</span><span class="p">)</span> <span class="c1">// search right subtree
+</span><span class="c1"></span>    <span class="p">{</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>        
+        <span class="n">Backtrack</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
