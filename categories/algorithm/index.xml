@@ -4,7 +4,17 @@
         <link>http://chinyu1229.github.io/categories/algorithm/</link>
         <description>Algorithm - Category - Wandering World</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
-            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 10 Jun 2021 00:48:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/algorithm/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 13 Jul 2021 17:40:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/algorithm/" rel="self" type="application/rss+xml" /><item>
+    <title>KMP算法 -- next解釋</title>
+    <link>http://chinyu1229.github.io/2021-07-13-kmp%E7%AE%97%E6%B3%95/</link>
+    <pubDate>Tue, 13 Jul 2021 17:40:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-07-13-kmp%E7%AE%97%E6%B3%95/</guid>
+    <description><![CDATA[KMP 基本概念 一種用來字符串匹配的算法 一些定義：
+ s[] 為主字串 ， p[] 是匹配串 ， 即可以理解成p是否是s的子字串 前綴：包含首位字符但不包含末位字符的子字串; 後綴：包含末位字符但不包含首位字符的子字串 部分匹配值 ： 前綴與後綴最長共有長度 next[] 存的是每個下標對應的部分匹配值   核心思考：每次匹配失敗時，把p串往後移動至next對應的值  next的含義與模擬 字串從1開始存，next[i], 是p[1,i]中前綴和後綴相同的最大長度（部分匹配值）， 定義 next[1] = 0 例如：
+1 2 3  idx 1 2 3 4 5 6 str a b c a b a next 0 0 0 1 2 1   求next陣列的code
+1 2 3 4 5 6 7  // m 為 p 的長度 for(int i = 2, j = 0; i &lt;= m; i++) { while(j &amp;&amp; p[i] !]]></description>
+</item><item>
     <title>Backpack_Problem</title>
     <link>http://chinyu1229.github.io/2021-06-11-backpack-problem/</link>
     <pubDate>Thu, 10 Jun 2021 00:48:12 &#43;0800</pubDate>

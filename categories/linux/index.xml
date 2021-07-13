@@ -4,7 +4,14 @@
         <link>http://chinyu1229.github.io/categories/linux/</link>
         <description>Linux - Category - Wandering World</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
-            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 02 Jun 2021 22:10:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/linux/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 20 Jun 2021 17:13:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/linux/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux Chapter 24 CreateProcess</title>
+    <link>http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/</link>
+    <pubDate>Sun, 20 Jun 2021 17:13:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/</guid>
+    <description><![CDATA[CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖 fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0   ]]></description>
+</item><item>
     <title>Linux Chapter 21 Signal 處理常式</title>
     <link>http://chinyu1229.github.io/2021-06-02-linux_chapter_21_signal%E8%99%95%E7%90%86%E5%B8%B8%E5%BC%8F/</link>
     <pubDate>Wed, 02 Jun 2021 22:10:12 &#43;0800</pubDate>

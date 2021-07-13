@@ -4,9 +4,26 @@
         <link>http://chinyu1229.github.io/</link>
         <description>About LoveIt Theme</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
-            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 10 Jun 2021 00:48:12 &#43;0800</lastBuildDate>
+            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 13 Jul 2021 17:40:12 &#43;0800</lastBuildDate>
             <atom:link href="http://chinyu1229.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>KMP算法 -- next解釋</title>
+    <link>http://chinyu1229.github.io/2021-07-13-kmp%E7%AE%97%E6%B3%95/</link>
+    <pubDate>Tue, 13 Jul 2021 17:40:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-07-13-kmp%E7%AE%97%E6%B3%95/</guid>
+    <description><![CDATA[KMP 基本概念 一種用來字符串匹配的算法 一些定義：
+ s[] 為主字串 ， p[] 是匹配串 ， 即可以理解成p是否是s的子字串 前綴：包含首位字符但不包含末位字符的子字串; 後綴：包含末位字符但不包含首位字符的子字串 部分匹配值 ： 前綴與後綴最長共有長度 next[] 存的是每個下標對應的部分匹配值   核心思考：每次匹配失敗時，把p串往後移動至next對應的值  next的含義與模擬 字串從1開始存，next[i], 是p[1,i]中前綴和後綴相同的最大長度（部分匹配值）， 定義 next[1] = 0 例如：
+1 2 3  idx 1 2 3 4 5 6 str a b c a b a next 0 0 0 1 2 1   求next陣列的code
+1 2 3 4 5 6 7  // m 為 p 的長度 for(int i = 2, j = 0; i &lt;= m; i++) { while(j &amp;&amp; p[i] !]]></description>
+</item><item>
+    <title>Linux Chapter 24 CreateProcess</title>
+    <link>http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/</link>
+    <pubDate>Sun, 20 Jun 2021 17:13:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/</guid>
+    <description><![CDATA[CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖 fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0   ]]></description>
+</item><item>
     <title>Backpack_Problem</title>
     <link>http://chinyu1229.github.io/2021-06-11-backpack-problem/</link>
     <pubDate>Thu, 10 Jun 2021 00:48:12 &#43;0800</pubDate>
@@ -41,7 +58,7 @@
     <pubDate>Thu, 20 May 2021 01:12:12 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-system-v-ipc/</guid>
-    <description><![CDATA[Linux 嵌入式開發 &ndash; 並行開發&mdash; System V IPC System V IPC  包含共享內存、消息對列、和信號燈集 每個IPC對象有唯一的ID IPC對象創建後一直存在，直到被顯式的刪除（主動刪除） 每個IPC對象有一個關聯的KEY ipcs / ipcrm 實現進程間通訊  Key ftok 1 2 3  #include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;key_t ftok(const char *path,int proj_id);    成功時返回合法的key值，失敗時返回EOF path存在且可以被訪問文件的路徑 proj_id 用於生成key的數字，不能為0  範例 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;#include&lt;unistd.h&gt; int main(int argc, char *argv[]) { key_t key; if((key = ftok(&#34;.&#34;,&#39;a&#39;)) == -1) { perror(&#34;key&#34;); exit(-1); } }   共享內存  是一種最高校的進程間通信方式，進程可以直接讀寫內存，而不需要任何數據的拷貝 在內核空間創建，可以被進程映射到用戶空間訪問，使用靈活 由於多個進程可以同時訪問共享內存，印此需要同步和互斥機制配合使用  使用步驟  創建/打開共享內存 映射共享內存，即把指定的共享內存映射到進程的地址空間用於訪問 讀寫共享內存 撤銷共享內存映射 刪除共享內存對象  創建 1 2 3  #include&lt;sys/ipc.]]></description>
+    <description><![CDATA[Linux 嵌入式開發 &ndash; 並行開發&mdash; System V IPC System V IPC  包含共享內存、消息對列、和信號燈集 每個IPC對象有唯一的ID IPC對象創建後一直存在，直到被顯式的刪除（主動刪除） 每個IPC對象有一個關聯的KEY ipcs / ipcrm 實現進程間通訊  Key ftok 1 2 3  #include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;key_t ftok(const char *path,int proj_id);    成功時返回合法的key值，失敗時返回EOF path存在且可以被訪問文件的路徑 proj_id 用於生成key的數字，不能為0  範例 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt;#include&lt;sys/types.h&gt;#include&lt;sys/ipc.h&gt;#include&lt;unistd.h&gt; int main(int argc, char *argv[]) { key_t key; if((key = ftok(&#34;.&#34;,&#39;a&#39;)) == -1) { perror(&#34;key&#34;); exit(-1); } }   共享內存  是一種最高效的進程間通信方式，進程可以直接讀寫內存，而不需要任何數據的拷貝 在內核空間創建，可以被進程映射到用戶空間訪問，使用靈活 由於多個進程可以同時訪問共享內存，因此需要同步和互斥機制配合使用  使用步驟  創建/打開共享內存 映射共享內存，即把指定的共享內存映射到進程的地址空間用於訪問 讀寫共享內存 撤銷共享內存映射 刪除共享內存對象  創建 1 2 3  #include&lt;sys/ipc.]]></description>
 </item><item>
     <title>Linux 嵌入式開發 – 並行開發—Unix進程間的通訊方式</title>
     <link>http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC-unix%E9%80%B2%E7%A8%8B%E9%96%93%E7%9A%84%E9%80%9A%E8%A8%8A%E6%96%B9%E5%BC%8F/</link>
@@ -87,15 +104,5 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
 1 2 3 4  if(lseek(fd,0,SEEK_END)==-1) errExit(&#34;lseek&#34;); if(write(fd, buf, len)!=len) fatal(&#34;Partial/failed write&#34;);   會有race condtion問題，第一個process在lseek()與write()之間被第二個相同的行程中斷，那兩個行程會在寫入之前將他們的file offset設定到相同位置，因此會產生互相覆蓋的現象
  為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 1 2 3  #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error   用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
 1 2 3  int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;);   可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag]]></description>
-</item><item>
-    <title>Linux Chapter 4 - 檔案IO</title>
-    <link>http://chinyu1229.github.io/2021-05-19-%E6%AA%94%E6%A1%88io/</link>
-    <pubDate>Wed, 19 May 2021 17:40:12 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://chinyu1229.github.io/2021-05-19-%E6%AA%94%E6%A1%88io/</guid>
-    <description><![CDATA[檔案I/O 概述 全部執行I/O的系統呼叫都是透過檔案描述符來控制開啟的檔案，各類型的檔案在開啟之後，都能以檔案描述符進行操控。
-標準檔案符 shell平時會將以下三個檔案描述符保持一直開啟，可以使用I/O redirection進行適當的修改
-   file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
-1 2 3 4 5  #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error   flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CTEATflags可以省略）]]></description>
 </item></channel>
 </rss>
