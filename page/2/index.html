@@ -141,6 +141,12 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
    file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
 1 2 3 4 5  #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error   flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CTEATflags可以省略）</div><div class="post-footer">
         <a href="/2021-05-19-%E6%AA%94%E6%A1%88io/">Read More</a></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2021-9-7-%E4%BA%8C%E5%88%86%E6%B3%95/">整數二分法 Binary Search</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="0001-01-01">0001-01-01</time></span>&nbsp;<span class="post-category">included in <a href="/categories/algorithm/"><i class="far fa-folder fa-fw"></i>Algorithm</a></span></div><div class="content">整數二分 何時使用 有單調性（monotone)的一組數字可以二分，但沒有單調性也可以使用二分法
+在何時適用 若可以找到某種性質，在右半邊滿足，左半邊不滿足(在右半邊不滿足，左半邊滿足)，就可以尋找邊界
+模板code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  bool check(int x){/*stasify some conditions*/} // [l, r] -&gt; [l, mid] + [mid + 1, r] int bsearch1(int l, int r) { int mid = l + r &gt;&gt; 1; if(check(mid)) r = mid; else l = mid + 1; } // [l, r] -&gt; [l, mid - 1] + [mid, r] int bsearch2(int l, int r) { int mid = l + r + 1 &gt;&gt; 1; if(check(mid)) l = mid; else r = mid - 1; } return l; //also can return r   圖例與解釋 找尋紅色的邊界：check(mid) ：滿足紅色條件</div><div class="post-footer">
+        <a href="/2021-9-7-%E4%BA%8C%E5%88%86%E6%B3%95/">Read More</a></div>
 </article><ul class="pagination"><li class="page-item ">
                     <span class="page-link">
                         <a href="/">1</a>
