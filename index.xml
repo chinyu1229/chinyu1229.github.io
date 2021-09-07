@@ -4,9 +4,18 @@
         <link>http://chinyu1229.github.io/</link>
         <description>About LoveIt Theme</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
-            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 13 Jul 2021 17:40:12 &#43;0800</lastBuildDate>
+            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 07 Sep 2021 23:11:12 &#43;0800</lastBuildDate>
             <atom:link href="http://chinyu1229.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>整數二分法 Binary Search</title>
+    <link>http://chinyu1229.github.io/2021-9-7-%E4%BA%8C%E5%88%86%E6%B3%95/</link>
+    <pubDate>Tue, 07 Sep 2021 23:11:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-9-7-%E4%BA%8C%E5%88%86%E6%B3%95/</guid>
+    <description><![CDATA[整數二分 何時使用 有單調性（monotone)的一組數字可以二分，但沒有單調性也可以使用二分法
+在何時適用 若可以找到某種性質，在右半邊滿足，左半邊不滿足(在右半邊不滿足，左半邊滿足)，就可以尋找邊界
+模板code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  bool check(int x){/*stasify some conditions*/} // [l, r] -&gt; [l, mid] + [mid + 1, r] int bsearch1(int l, int r) { int mid = l + r &gt;&gt; 1; if(check(mid)) r = mid; else l = mid + 1; } // [l, r] -&gt; [l, mid - 1] + [mid, r] int bsearch2(int l, int r) { int mid = l + r + 1 &gt;&gt; 1; if(check(mid)) l = mid; else r = mid - 1; } return l; //also can return r   圖例與解釋 找尋紅色的邊界：check(mid) ：滿足紅色條件]]></description>
+</item><item>
     <title>KMP算法 -- next解釋</title>
     <link>http://chinyu1229.github.io/2021-07-13-kmp%E7%AE%97%E6%B3%95/</link>
     <pubDate>Tue, 13 Jul 2021 17:40:12 &#43;0800</pubDate>
@@ -93,16 +102,5 @@ Process control block  PID process user process status / priority file descripti
 stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
 設定一個stdio stream的緩衝模式 1 2  #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size);   在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
  參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !]]></description>
-</item><item>
-    <title>Linux Chapter 5 - 檔案IO深入探討</title>
-    <link>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</link>
-    <pubDate>Thu, 20 May 2021 01:03:12 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</guid>
-    <description><![CDATA[檔案I/O深入探討 原子與競速條件 以互斥的方式建立檔案 在open()中設定O_EXCL與O_CREAT可以在檔案已存在的時候回傳錯誤，確保process本身是檔案的建立者
-將資料附加到檔案 當我們有多個process要增加資料到同一個檔案 會有下列這種寫法
-1 2 3 4  if(lseek(fd,0,SEEK_END)==-1) errExit(&#34;lseek&#34;); if(write(fd, buf, len)!=len) fatal(&#34;Partial/failed write&#34;);   會有race condtion問題，第一個process在lseek()與write()之間被第二個相同的行程中斷，那兩個行程會在寫入之前將他們的file offset設定到相同位置，因此會產生互相覆蓋的現象
- 為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 1 2 3  #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error   用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
-1 2 3  int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;);   可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag]]></description>
 </item></channel>
 </rss>
