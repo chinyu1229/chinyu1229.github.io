@@ -50,6 +50,11 @@ pid_t fork(void);
    2. 各自關閉不再使用的description
 
 ## vfork()
+```c
+#include <unistd.h>
+pid_t vfork(void);
+    In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0
+```
 #### 源由與目前的fork()
 在早期BSD，fork()會對文字、stack、heap等區段進行完整的複製，但經常有馬上就使用exec()的狀況，導致前面的複製動作很多餘，因此引用了vfork()，使用在fork()後立刻使用exec()的時候，增加了效率
 

@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/chinyu1229.github.io\/2021-06-20-linux_chapter_24_createprocess\/"
-        },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  447 ,
+        },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  473 ,
         "url": "http:\/\/chinyu1229.github.io\/2021-06-20-linux_chapter_24_createprocess\/","datePublished": "2021-06-20T17:13:12+08:00","dateModified": "2021-09-08T22:30:12+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -111,7 +111,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Linux Chapter 24 CreateProcess</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-20">2021-06-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;447 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-06-20">2021-06-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;473 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;3 minutes&nbsp;<span id="/2021-06-20-linux_chapter_24_createprocess/" class="leancloud_visitors" data-flag-title="Linux Chapter 24 CreateProcess">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
@@ -232,7 +232,19 @@
 </li>
 </ol>
 <h2 id="vfork">vfork()</h2>
-<h4 id="源由與目前的fork">源由與目前的fork()</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="n">pid_t</span> <span class="nf">vfork</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+    <span class="n">In</span> <span class="nl">parent</span><span class="p">:</span> <span class="n">returns</span> <span class="n">process</span> <span class="n">ID</span> <span class="n">of</span> <span class="n">child</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="err">–</span><span class="mi">1</span> <span class="n">on</span> <span class="n">error</span><span class="p">;</span> <span class="n">in</span> <span class="n">successfully</span> <span class="n">created</span> <span class="nl">child</span><span class="p">:</span> <span class="n">always</span> <span class="n">returns</span> <span class="mi">0</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="源由與目前的fork">源由與目前的fork()</h4>
 <p>在早期BSD，fork()會對文字、stack、heap等區段進行完整的複製，但經常有馬上就使用exec()的狀況，導致前面的複製動作很多餘，因此引用了vfork()，使用在fork()後立刻使用exec()的時候，增加了效率</p>
 <p>但目前UNIX採用copy-on-write實作fork()，因此大幅消除了vfork()的需求</p>
 <h2 id="同步訊號以避免race-condition">同步訊號以避免Race condition</h2>
