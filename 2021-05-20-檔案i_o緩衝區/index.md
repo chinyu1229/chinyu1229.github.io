@@ -10,7 +10,8 @@ system call read() & write()在操作磁碟檔案時不會直接對磁碟存取�
 **如果在此期間，另外一個process試圖讀取檔案的這幾個bytes，則核心將自動從緩衝區提供資料，而不是從檔案讀取。同理於read()期間有write() process的情況**
 
 ## 緩衝區大小對效能的影響
-![](https://i.imgur.com/OVUHxqa.jpg)
+<img src="eff.png" width = "80%" />
+
 * system cpu time：主要是測量使用者空間與核心空間之間資料傳輸所消耗的時間
     * 包含CPU的處理, 等待I/O I/O的處理,作業系統處理提供一些服務額外的時間，以及系統閒置的時間
 * Elapsed time : 完整的程式在這個系統裡面執行的時間
@@ -33,7 +34,9 @@ int setvbuf(FILE *stream, char *buf, int mode, size_t size);
     * buf & size 指定使用的緩衝區
         * 若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂
         * 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小
-    * mode指定緩衝區的類型![](https://i.imgur.com/sIsu0YR.jpg)
+    * mode指定緩衝區的類型
+        <img src="mode1.png" width = "80%">
+        <img src="mode2.png" width = "80%">
 
 ### 範例
 ```c
@@ -158,7 +161,7 @@ fd = open(pathname,O_WRONLY | O_SYNC);
 關於O_SYNC對效能的影響可以參考 書籍p.265
 
 #### I/O緩衝摘要
-![](https://i.imgur.com/EanlGPj.jpg)
+<img src="summary.png" width="80%">
 
 #### 繞過緩衝區快取：直接I/O
 在進行磁碟I/O時，繞過緩衝區快取，可以直接從使用者空間將資料傳輸到檔案或磁碟裝置。

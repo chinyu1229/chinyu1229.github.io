@@ -128,8 +128,15 @@ Process control block  PID process user process status / priority file descripti
 ＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
 stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
 設定一個stdio stream的緩衝模式 1 2  #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size);   在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
- 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !</div><div class="post-footer">
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型     範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !</div><div class="post-footer">
         <a href="/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/">Read More</a></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2021-05-19-%E6%AA%94%E6%A1%88io/">Linux Chapter 4 - 檔案IO</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-05-19">2021-05-19</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div><div class="content">檔案I/O 概述 全部執行I/O的系統呼叫都是透過檔案描述符來控制開啟的檔案，各類型的檔案在開啟之後，都能以檔案描述符進行操控。
+標準檔案符 shell平時會將以下三個檔案描述符保持一直開啟，可以使用I/O redirection進行適當的修改
+   file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
+1 2 3 4 5  #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error   flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CREATflags可以省略）</div><div class="post-footer">
+        <a href="/2021-05-19-%E6%AA%94%E6%A1%88io/">Read More</a></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/">Linux Chapter 5 - 檔案IO深入探討</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="0001-01-01">0001-01-01</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div><div class="content">檔案I/O深入探討 原子與競速條件 以互斥的方式建立檔案 在open()中設定O_EXCL與O_CREAT可以在檔案已存在的時候回傳錯誤，確保process本身是檔案的建立者
@@ -138,13 +145,6 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
  為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 1 2 3  #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error   用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
 1 2 3  int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;);   可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag</div><div class="post-footer">
         <a href="/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/">Read More</a></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2021-05-19-%E6%AA%94%E6%A1%88io/">Linux Chapter 4 - 檔案IO</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-05-19">2021-05-19</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div><div class="content">檔案I/O 概述 全部執行I/O的系統呼叫都是透過檔案描述符來控制開啟的檔案，各類型的檔案在開啟之後，都能以檔案描述符進行操控。
-標準檔案符 shell平時會將以下三個檔案描述符保持一直開啟，可以使用I/O redirection進行適當的修改
-   file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
-1 2 3 4 5  #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error   flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CTEATflags可以省略）</div><div class="post-footer">
-        <a href="/2021-05-19-%E6%AA%94%E6%A1%88io/">Read More</a></div>
 </article><ul class="pagination"><li class="page-item ">
                     <span class="page-link">
                         <a href="/">1</a>

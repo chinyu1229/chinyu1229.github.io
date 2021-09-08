@@ -101,6 +101,6 @@ Process control block  PID process user process status / priority file descripti
 ＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
 stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
 設定一個stdio stream的緩衝模式 1 2  #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size);   在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
- 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !]]></description>
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型     範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !]]></description>
 </item></channel>
 </rss>

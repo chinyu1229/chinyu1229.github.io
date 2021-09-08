@@ -25,7 +25,7 @@ int open(const char *pathname, int flags, ... /*mode_t mode*/);
                  Return file descriptor on success, -1 on error
 ```
 flags -> 為位元mask 指定檔案的存取模式
-mode -> 指定了檔案的存取權限（如果open()沒有指定`O_CTEAT`flags可以省略）
+mode -> 指定了檔案的存取權限（如果open()沒有指定`O_CREAT`flags可以省略）
 * 由於flags各個參數互相獨立（除了必選項不可重複）皆可以使用`|`來新增性質
 
 #### 必選項：以下三個常數中必須指定一個，且僅允許指定一個。
@@ -63,6 +63,7 @@ mode -> 指定了檔案的存取權限（如果open()沒有指定`O_CTEAT`flags�
  
  
 詳細內容可以參考The linux programming interface 國際中文版p.84
+
 man page : https://man7.org/linux/man-pages/man2/open.2.html
 
   

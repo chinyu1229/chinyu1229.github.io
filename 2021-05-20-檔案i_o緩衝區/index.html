@@ -13,7 +13,7 @@
 ＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
 stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
 設定一個stdio stream的緩衝模式 1 2  #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size);   在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
- 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !" />
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型     範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-20T01:04:12&#43;08:00" />
@@ -30,11 +30,11 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
 ＊ 結論： 若我們正對檔案進行大量的資料讀寫，則以大區塊緩衝資料來減少system call 即可提升系統效能
 stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩衝可以降低system call。
 設定一個stdio stream的緩衝模式 1 2  #include&lt;stdio.h&gt;int setvbuf(FILE *stream, char *buf, int mode, size_t size);   在開啟串流之後，必須在對串流進行任何其他的stdio函式之前先呼叫setbuf() 因為setbuf()將影響後續的stdio操作對串流的行為
- 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型    範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !"/>
+ 參數  stream:可以識別要修改的檔案stream緩衝區 buf &amp; size 指定使用的緩衝區  若buf不為NULL則以其指向的size大小區塊作為stream的緩衝區，因為stdio接著會使用buf指向的緩衝區，所以應該以靜態配置或使用malloc()於heap做動態配置，不應該配置為stack裡面的區域變數，否則當函式返回時會釋放stack frame，導致混亂 若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小   mode指定緩衝區的類型     範例 1 2 3 4  #defind BUF_SIZE 1024 static char buf[BUF_SIZE]; if(setvbuf(stdout, buf, _IOFBF) !"/>
 <meta name="application-name" content="Wandering World">
 <meta name="apple-mobile-web-app-title" content="Wandering World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><link rel="prev" href="http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/" /><link rel="next" href="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/" /><link rel="prev" href="http://chinyu1229.github.io/2021-05-19-%E6%AA%94%E6%A1%88io/" /><link rel="next" href="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -165,14 +165,7 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
 在後續的某個時間點，核心會將其<em>緩衝區</em>的資料寫入磁碟</p>
 <p><strong>如果在此期間，另外一個process試圖讀取檔案的這幾個bytes，則核心將自動從緩衝區提供資料，而不是從檔案讀取。同理於read()期間有write() process的情況</strong></p>
 <h2 id="緩衝區大小對效能的影響">緩衝區大小對效能的影響</h2>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="https://i.imgur.com/OVUHxqa.jpg"
-        data-srcset="https://i.imgur.com/OVUHxqa.jpg, https://i.imgur.com/OVUHxqa.jpg 1.5x, https://i.imgur.com/OVUHxqa.jpg 2x"
-        data-sizes="auto"
-        alt="https://i.imgur.com/OVUHxqa.jpg"
-        title="https://i.imgur.com/OVUHxqa.jpg" /></p>
+<p><img src="eff.png" width = "80%" /></p>
 <ul>
 <li>system cpu time：主要是測量使用者空間與核心空間之間資料傳輸所消耗的時間
 <ul>
@@ -207,14 +200,9 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
 <li>若buf為NULL，stdio會自動配置一個緩衝區提供stream使用（除非我們選擇無緩衝的I/O)。在SUSv3允許但不要求實作時使用size來決定緩衝區的大小</li>
 </ul>
 </li>
-<li>mode指定緩衝區的類型<img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="https://i.imgur.com/sIsu0YR.jpg"
-        data-srcset="https://i.imgur.com/sIsu0YR.jpg, https://i.imgur.com/sIsu0YR.jpg 1.5x, https://i.imgur.com/sIsu0YR.jpg 2x"
-        data-sizes="auto"
-        alt="https://i.imgur.com/sIsu0YR.jpg"
-        title="https://i.imgur.com/sIsu0YR.jpg" /></li>
+<li>mode指定緩衝區的類型
+<img src="mode1.png" width = "80%">
+<img src="mode2.png" width = "80%"></li>
 </ul>
 </li>
 </ul>
@@ -434,14 +422,7 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
 </div><p>每次write()檔案都會自動將檔案資料與中繼資料刷新到硬碟（依照檔案完整性進行寫入操作）</p>
 <p>關於O_SYNC對效能的影響可以參考 書籍p.265</p>
 <h4 id="io緩衝摘要">I/O緩衝摘要</h4>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="https://i.imgur.com/EanlGPj.jpg"
-        data-srcset="https://i.imgur.com/EanlGPj.jpg, https://i.imgur.com/EanlGPj.jpg 1.5x, https://i.imgur.com/EanlGPj.jpg 2x"
-        data-sizes="auto"
-        alt="https://i.imgur.com/EanlGPj.jpg"
-        title="https://i.imgur.com/EanlGPj.jpg" /></p>
+<img src="summary.png" width="80%">
 <h4 id="繞過緩衝區快取直接io">繞過緩衝區快取：直接I/O</h4>
 <p>在進行磁碟I/O時，繞過緩衝區快取，可以直接從使用者空間將資料傳輸到檔案或磁碟裝置。
 direct I/O有時反而會大幅降低效能，因為核心為了改善效能，進行的許多優化。因此只適用於有特定I/O需求的應用，例如資料庫系統有自己的快取和I/O優化，所以不需要核心消耗CPU的時間與記憶體去進行同樣的工作。</p>
@@ -501,7 +482,7 @@ direct I/O有時反而會大幅降低效能，因為核心為了改善效能，�
         </section>
     </div>
 
-    <div class="post-nav"><a href="/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/" class="prev" rel="prev" title="Linux Chapter 5 - 檔案IO深入探討"><i class="fas fa-angle-left fa-fw"></i>Linux Chapter 5 - 檔案IO深入探討</a>
+    <div class="post-nav"><a href="/2021-05-19-%E6%AA%94%E6%A1%88io/" class="prev" rel="prev" title="Linux Chapter 4 - 檔案IO"><i class="fas fa-angle-left fa-fw"></i>Linux Chapter 4 - 檔案IO</a>
             <a href="/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" class="next" rel="next" title="Linux 嵌入式開發 – 並行開發—進程與線程">Linux 嵌入式開發 – 並行開發—進程與線程<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
