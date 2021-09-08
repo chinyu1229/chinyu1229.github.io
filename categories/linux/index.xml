@@ -10,7 +10,7 @@
     <pubDate>Sun, 20 Jun 2021 17:13:12 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/</guid>
-    <description><![CDATA[CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖 fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0   ]]></description>
+    <description><![CDATA[CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖 fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0    呼叫後將存在兩個process，且每個process都會從fork()的返回處繼續執行 兩個process擁有不同的stack segment、data segment、heap segment、text segment副本（child可以再修改，且不影響parent） 返回pid == 0是child process 返回pid !]]></description>
 </item><item>
     <title>Linux Chapter 21 Signal 處理常式</title>
     <link>http://chinyu1229.github.io/2021-06-02-linux_chapter_21_signal%E8%99%95%E7%90%86%E5%B8%B8%E5%BC%8F/</link>
@@ -32,6 +32,17 @@
 訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
  signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  1 2 3  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error    handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  #include&lt;signal.]]></description>
+</item><item>
+    <title>Linux Chapter 5 - 檔案IO深入探討</title>
+    <link>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</link>
+    <pubDate>Thu, 20 May 2021 17:40:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</guid>
+    <description><![CDATA[檔案I/O深入探討 原子與競速條件 以互斥的方式建立檔案 在open()中設定O_EXCL與O_CREAT可以在檔案已存在的時候回傳錯誤，確保process本身是檔案的建立者
+將資料附加到檔案 當我們有多個process要增加資料到同一個檔案 會有下列這種寫法
+1 2 3 4  if(lseek(fd,0,SEEK_END)==-1) errExit(&#34;lseek&#34;); if(write(fd, buf, len)!=len) fatal(&#34;Partial/failed write&#34;);   會有race condtion問題，第一個process在lseek()與write()之間被第二個相同的行程中斷，那兩個行程會在寫入之前將他們的file offset設定到相同位置，因此會產生互相覆蓋的現象
+ 為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 1 2 3  #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error   用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
+1 2 3  int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;);   可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag]]></description>
 </item><item>
     <title>Linux Chapter 13 - 檔案IO緩衝區</title>
     <link>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E7%B7%A9%E8%A1%9D%E5%8D%80/</link>
@@ -56,16 +67,5 @@ stdio函式庫的緩衝 操作磁碟檔案時，對大型區塊資料使用緩�
 標準檔案符 shell平時會將以下三個檔案描述符保持一直開啟，可以使用I/O redirection進行適當的修改
    file descriptor 用途 POSIX 名稱 stdio stream     0 標準輸入 STDIN_FILENO stdin   1 標準輸出 STDOUT_FILENO stdout   2 標準錯誤 STDERR_FILENO stderr    開啟檔案 open()
 1 2 3 4 5  #include&lt;sys/stat.h&gt;#include&lt;fcntl.h&gt;int open(const char *pathname, int flags, ... /*mode_t mode*/); Return file descriptor on success, -1 on error   flags -&gt; 為位元mask 指定檔案的存取模式 mode -&gt; 指定了檔案的存取權限（如果open()沒有指定O_CREATflags可以省略）]]></description>
-</item><item>
-    <title>Linux Chapter 5 - 檔案IO深入探討</title>
-    <link>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</link>
-    <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-    <author>Author</author>
-    <guid>http://chinyu1229.github.io/2021-05-20-%E6%AA%94%E6%A1%88i_o%E6%B7%B1%E5%85%A5%E6%8E%A2%E8%A8%8E/</guid>
-    <description><![CDATA[檔案I/O深入探討 原子與競速條件 以互斥的方式建立檔案 在open()中設定O_EXCL與O_CREAT可以在檔案已存在的時候回傳錯誤，確保process本身是檔案的建立者
-將資料附加到檔案 當我們有多個process要增加資料到同一個檔案 會有下列這種寫法
-1 2 3 4  if(lseek(fd,0,SEEK_END)==-1) errExit(&#34;lseek&#34;); if(write(fd, buf, len)!=len) fatal(&#34;Partial/failed write&#34;);   會有race condtion問題，第一個process在lseek()與write()之間被第二個相同的行程中斷，那兩個行程會在寫入之前將他們的file offset設定到相同位置，因此會產生互相覆蓋的現象
- 為了避免此問題，必須讓移往檔案結尾下一個byte操作與寫入操作都是原子操作，我們可以使用O_APPENDflag達成  檔案操作控制 1 2 3  #include&lt;fcntl.h&gt;int fcntl(int fd, int cmd,...); Return value on success depends on cmd, returns -1 on error   用途之一是用來取得或修改access mode,以及一個開啟檔案的開啟檔案狀態flag 取得設定的cmd : F_GETFL
-1 2 3  int flags, accessMode; flags = fcntl(fd, F_GETFL); if(flags == -1) errExit(&#34;fcntl&#34;);   可以使用 &amp; 操作去判斷目前的開啟檔案狀態flag]]></description>
 </item></channel>
 </rss>
