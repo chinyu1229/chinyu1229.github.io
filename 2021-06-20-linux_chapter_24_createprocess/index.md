@@ -21,6 +21,7 @@
    * 重新建立 stack segment、data segment、heap segment
 
 大致流程圖
+
 <img src="process.png" width = "70%" /> 
 
 ## fork()

@@ -6,7 +6,8 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>Linux Chapter 24 CreateProcess - Wandering World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux Chapter 24 CreateProcess" />
-<meta property="og:description" content="CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖 fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0    呼叫後將存在兩個process，且每個process都會從fork()的返回處繼續執行 兩個process擁有不同的stack segment、data segment、heap segment、text segment副本（child可以再修改，且不影響parent） 返回pid == 0是child process 返回pid !" />
+<meta property="og:description" content="CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖
+fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0    呼叫後將存在兩個process，且每個process都會從fork()的返回處繼續執行 兩個process擁有不同的stack segment、data segment、heap segment、text segment副本（child可以再修改，且不影響parent） 返回pid == 0是child process 返回pid !" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-06-20T17:13:12&#43;08:00" />
@@ -16,7 +17,8 @@
 <meta name="twitter:image" content="http://chinyu1229.github.io/logo.png"/>
 
 <meta name="twitter:title" content="Linux Chapter 24 CreateProcess"/>
-<meta name="twitter:description" content="CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖 fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0    呼叫後將存在兩個process，且每個process都會從fork()的返回處繼續執行 兩個process擁有不同的stack segment、data segment、heap segment、text segment副本（child可以再修改，且不影響parent） 返回pid == 0是child process 返回pid !"/>
+<meta name="twitter:description" content="CreateProcess fork() exit() wait() execev() 簡介  fork()  parent process經由呼叫fork()建立一個 child process child獲得parent的stack segment、data segment、heap segment、text segment 可說是把parent process一分為二   exit()  terminate a process 將佔用的所有資源歸還給kernel parent 可以利用 wait()來取得結束的狀態(status)   wait()  若child process還未呼叫exit()，那wait()會suspend parent process，直到有任一child process terminated 可以取得status   execve()  Load a new program到目前process的記憶體 丟去現存的text segment 重新建立 stack segment、data segment、heap segment    大致流程圖
+fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns process ID of child on success, or –1 on error; in successfully created child: always returns 0    呼叫後將存在兩個process，且每個process都會從fork()的返回處繼續執行 兩個process擁有不同的stack segment、data segment、heap segment、text segment副本（child可以再修改，且不影響parent） 返回pid == 0是child process 返回pid !"/>
 <meta name="application-name" content="Wandering World">
 <meta name="apple-mobile-web-app-title" content="Wandering World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -184,8 +186,8 @@
 </ul>
 </li>
 </ol>
-<p>大致流程圖
-<img src="process.png" width = "70%" /></p>
+<p>大致流程圖</p>
+<p><img src="process.png" width = "70%" /></p>
 <h2 id="fork">fork()</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
