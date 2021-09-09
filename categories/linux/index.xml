@@ -4,7 +4,18 @@
         <link>http://chinyu1229.github.io/categories/linux/</link>
         <description>Linux - Category - Wandering World</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
-            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 20 Jun 2021 17:13:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/linux/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 09 Sep 2021 21:13:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/linux/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux Chapter 24 CreateProcess</title>
+    <link>http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/</link>
+    <pubDate>Thu, 09 Sep 2021 21:13:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/</guid>
+    <description><![CDATA[Process Termination _exit() and exit() 有兩種方式可以終止程式：
+ abnormal - 由訊號觸發，預設是終止程式（可以core dump) normally - 使用_exit()終止程式  1 2  #include&lt;unisted.h&gt;void _exit(int status);    status:定義終止狀態，在parent process可以呼叫wait()以取得狀態 結束狀態為 0 ，表示process順利結束。非0表示異常終止 非0狀態沒有固定規則，每個應用程式有自己的規則要參考他們的文件 普遍為SUSv3制訂的：EXIT_SUCCESS(0) EXIT_FAILURE(1)  程式通常不會直接呼叫_exit()，因為會直接終止，通常會呼叫exit()，因為可以在真正呼叫_exit()前執行一些動作
+1 2  #include&lt;stdlib.h&gt;void exit(int status);   會進行以下動作：
+ 以反向註冊順序，呼叫exit處理常式 flush stdio的串流緩衝區 使用status 提供的值執行_exit() system call  與在main() 中return 終止程式或執行到main()結尾終止的方式，return n; 等同於 exit(n)
+ 不等價的時候：若在exit的過程中有任何步驟存取main()的區域函數時，從main return會產生不可預期的行為。例如在呼叫setvbuf() 或 setbuf()時使用main()的區域函數時就會發生不等價的情況  行程終止的動作  關閉open file descriptor、directory stream、message catalog descriptor、conversion descriptor 關閉open file descriptor 後，會釋放此形成所有的file lock 解除任何加載的System V共享記憶體段，並將每個區段對應的shm_nattchcounter減去1 解除行程使用mmap()建立的記憶體映射   Exit Handler 在行程終止前執行一些操作，以應用程式的函式庫來說，行程終止前需要清理在生命週期間有用到的函式庫，因此需要exit handler來保證在終止前（結束時）會清理]]></description>
+</item><item>
     <title>Linux Chapter 24 CreateProcess</title>
     <link>http://chinyu1229.github.io/2021-06-20-linux_chapter_24_createprocess/</link>
     <pubDate>Sun, 20 Jun 2021 17:13:12 &#43;0800</pubDate>

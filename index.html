@@ -102,6 +102,14 @@
         alt="/images/avatar.jpeg"
         title="/images/avatar.jpeg" /></a></div><div class="links"><a href="https://github.com/chinyu1229" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="https://www.youtube.com/user/xxxx" title="YouTube" target="_blank" rel="noopener noreffer me"><i class="fab fa-youtube fa-fw"></i></a><a href="https://mastodon.technology/@xxxx" title="Mastodon" target="_blank" rel="noopener noreffer me"><i class="fab fa-mastodon fa-fw"></i></a><a href="mailto:chinyu0916@gmail.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a><a href="/index.xml" title="RSS" target="_blank" rel="noopener noreffer me"><i class="fas fa-rss fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2021-09-09-linux_chapter_25_processtermination/">Linux Chapter 24 CreateProcess</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-09-09">2021-09-09</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div><div class="content">Process Termination _exit() and exit() 有兩種方式可以終止程式：
+ abnormal - 由訊號觸發，預設是終止程式（可以core dump) normally - 使用_exit()終止程式  1 2  #include&lt;unisted.h&gt;void _exit(int status);    status:定義終止狀態，在parent process可以呼叫wait()以取得狀態 結束狀態為 0 ，表示process順利結束。非0表示異常終止 非0狀態沒有固定規則，每個應用程式有自己的規則要參考他們的文件 普遍為SUSv3制訂的：EXIT_SUCCESS(0) EXIT_FAILURE(1)  程式通常不會直接呼叫_exit()，因為會直接終止，通常會呼叫exit()，因為可以在真正呼叫_exit()前執行一些動作
+1 2  #include&lt;stdlib.h&gt;void exit(int status);   會進行以下動作：
+ 以反向註冊順序，呼叫exit處理常式 flush stdio的串流緩衝區 使用status 提供的值執行_exit() system call  與在main() 中return 終止程式或執行到main()結尾終止的方式，return n; 等同於 exit(n)
+ 不等價的時候：若在exit的過程中有任何步驟存取main()的區域函數時，從main return會產生不可預期的行為。例如在呼叫setvbuf() 或 setbuf()時使用main()的區域函數時就會發生不等價的情況  行程終止的動作  關閉open file descriptor、directory stream、message catalog descriptor、conversion descriptor 關閉open file descriptor 後，會釋放此形成所有的file lock 解除任何加載的System V共享記憶體段，並將每個區段對應的shm_nattchcounter減去1 解除行程使用mmap()建立的記憶體映射   Exit Handler 在行程終止前執行一些操作，以應用程式的函式庫來說，行程終止前需要清理在生命週期間有用到的函式庫，因此需要exit handler來保證在終止前（結束時）會清理</div><div class="post-footer">
+        <a href="/2021-09-09-linux_chapter_25_processtermination/">Read More</a></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2021-9-7-%E4%BA%8C%E5%88%86%E6%B3%95/">整數二分法 Binary Search</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-09-07">2021-09-07</time></span>&nbsp;<span class="post-category">included in <a href="/categories/algorithm/"><i class="far fa-folder fa-fw"></i>Algorithm</a></span></div><div class="content">整數二分 何時使用 有單調性（monotone)的一組數字可以二分，但沒有單調性也可以使用二分法
 在何時適用 若可以找到某種性質，在右半邊滿足，左半邊不滿足(在右半邊不滿足，左半邊滿足)，就可以尋找邊界
@@ -131,14 +139,6 @@ fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns proc
  可能發生的情況： 若主程式在呼叫malloc()期間，受到一個同樣呼叫malloc()的訊號處理常式中斷，則此linklist可能會遭到破壞，因此malloc()的函式家族與使用這些函式的其他函式庫函式都是不可重入。 其他會傳回靜態配置的記憶體，也是不可重入的，crypt() getpwnam() gethostbyname() getservbyname() 函式的內部紀錄是使用靜態的資料結構也是不可重入的，例如scanf() printf()，他們會有緩衝的I/O更新內部資料結構，所以在訊號處理常式使用printf()也在主程式呼叫printf()，緩衝區的資料會交錯，導致得到非期望的輸出結果，甚至是整個程式crush  標準的非同步訊號安全函式（async-signal-safe functions）  指可以安全地從訊號處理常式進行呼叫。 當函式是reentrant函式，或是不會受到訊號處理常式中斷，可以稱函式為async-signal-safe function man page: https://man7.org/linux/man-pages//man7/signal-safety.7.html  在訊號處理常式內使用errno 因為可能會更新errno變數，會導致函式reentrant，因為可能會覆寫主程式之前呼叫函式設定的errno值。 所以可以先儲存errno的值，並在函式執行完畢之後，回存errno
 1 2 3 4 5 6 7  void handler(int sig) { int sErrno; sErrno = errno; /* can execute a function that might modify errno */ errno = sErron; }   全域變數與sig_atomic_t資料型別 全域變數有reetrant問題，但有時需要在主程式與訊號處理常式之間共用全域變數，要能正確處理即可以保證安全。 常見的設計是：</div><div class="post-footer">
         <a href="/2021-06-02-linux_chapter_21_signal%E8%99%95%E7%90%86%E5%B8%B8%E5%BC%8F/">Read More</a></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">Linux Chapter 20 Signal 基本概念</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-05-29">2021-05-29</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div><div class="content">Linux Chapter 20 Signal 基本概念 概念 signal 可以通知行程（process）有事件發生，也可以稱為軟體中斷，多數情況下都無法預測訊號抵達的時間。
-行程可以送出訊號給另外一個行程，在此可以做為synchronization 或者 IPC 的技術。
-訊號類型與預設行為 可以在signal(7)使用手冊列出訊號名稱，或是參考書上p.430 下圖列出簡易版訊號表： 改變訊號處置 Unix系統提供兩種 1.signal() 2. sigaction()
- signal()提供設定訊號的原始API 介面比sigaction()簡單 sigaction()是建立訊號處置常式首推的API signal() 是基於 sigaction()實作的函式  1 2 3  #include&lt;signal.h&gt;void (*signal(int sig, void (*handler)(int))); Return previous signal disposition on success,or SIG_ERR on error    handler可以用以下的值取代  SIG_DFL:將訊號處置 重新設定為預設值，適用於還原先前signal()呼叫改變的訊號處置 SIG_IGN:忽略該訊號，行程也不會知道有此訊號    訊號處理常式 範例：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  #include&lt;signal.</div><div class="post-footer">
-        <a href="/2021-05-29-linux_chapter_20_signal-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">Read More</a></div>
 </article><ul class="pagination"><li class="page-item active">
                     <span class="page-link">
                         <a href="/">1</a>
@@ -146,6 +146,10 @@ fork() 1 2 3  #include &lt;unistd.h&gt;pid_t fork(void); In parent: returns proc
                 </li><li class="page-item ">
                     <span class="page-link">
                         <a href="/page/2/">2</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/3/">3</a>
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">
