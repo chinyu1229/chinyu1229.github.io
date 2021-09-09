@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Linux Chapter 24 CreateProcess - Wandering World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux Chapter 24 CreateProcess" />
+        <title>Linux Chapter 25 ProcessTermination - Wandering World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux Chapter 25 ProcessTermination" />
 <meta property="og:description" content="Process Termination _exit() and exit() 有兩種方式可以終止程式：
  abnormal - 由訊號觸發，預設是終止程式（可以core dump) normally - 使用_exit()終止程式  1 2  #include&lt;unisted.h&gt;void _exit(int status);    status:定義終止狀態，在parent process可以呼叫wait()以取得狀態 結束狀態為 0 ，表示process順利結束。非0表示異常終止 非0狀態沒有固定規則，每個應用程式有自己的規則要參考他們的文件 普遍為SUSv3制訂的：EXIT_SUCCESS(0) EXIT_FAILURE(1)  程式通常不會直接呼叫_exit()，因為會直接終止，通常會呼叫exit()，因為可以在真正呼叫_exit()前執行一些動作
 1 2  #include&lt;stdlib.h&gt;void exit(int status);   會進行以下動作：
@@ -19,7 +19,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://chinyu1229.github.io/logo.png"/>
 
-<meta name="twitter:title" content="Linux Chapter 24 CreateProcess"/>
+<meta name="twitter:title" content="Linux Chapter 25 ProcessTermination"/>
 <meta name="twitter:description" content="Process Termination _exit() and exit() 有兩種方式可以終止程式：
  abnormal - 由訊號觸發，預設是終止程式（可以core dump) normally - 使用_exit()終止程式  1 2  #include&lt;unisted.h&gt;void _exit(int status);    status:定義終止狀態，在parent process可以呼叫wait()以取得狀態 結束狀態為 0 ，表示process順利結束。非0表示異常終止 非0狀態沒有固定規則，每個應用程式有自己的規則要參考他們的文件 普遍為SUSv3制訂的：EXIT_SUCCESS(0) EXIT_FAILURE(1)  程式通常不會直接呼叫_exit()，因為會直接終止，通常會呼叫exit()，因為可以在真正呼叫_exit()前執行一些動作
 1 2  #include&lt;stdlib.h&gt;void exit(int status);   會進行以下動作：
@@ -32,7 +32,7 @@
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Linux Chapter 24 CreateProcess",
+        "headline": "Linux Chapter 25 ProcessTermination",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
@@ -117,10 +117,10 @@
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">Linux Chapter 24 CreateProcess</h1><div class="post-meta">
+        </div><article class="page single"><h1 class="single-title animated flipInX">Linux Chapter 25 ProcessTermination</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-09-09">2021-09-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;303 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;<span id="/2021-09-09-linux_chapter_25_processtermination/" class="leancloud_visitors" data-flag-title="Linux Chapter 24 CreateProcess">
+                <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;<span id="/2021-09-09-linux_chapter_25_processtermination/" class="leancloud_visitors" data-flag-title="Linux Chapter 25 ProcessTermination">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -402,7 +402,7 @@ Hello world
                             <a class="link-to-markdown" href="/2021-09-09-linux_chapter_25_processtermination/index.md" target="_blank">Read Markdown</a>
                         </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 24 CreateProcess"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 24 CreateProcess"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 24 CreateProcess"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 24 CreateProcess"><i class="fab fa-weibo fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 25 ProcessTermination"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 25 ProcessTermination"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 25 ProcessTermination"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://chinyu1229.github.io/2021-09-09-linux_chapter_25_processtermination/" data-title="Linux Chapter 25 ProcessTermination"><i class="fab fa-weibo fa-fw"></i></a></span>
             </div>
         </div>
     </div>
