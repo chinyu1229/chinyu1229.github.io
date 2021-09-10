@@ -6,8 +6,7 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>Linux 嵌入式開發 – 並行開發—進程與線程 - Wandering World</title><meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Linux 嵌入式開發 – 並行開發—進程與線程" />
-<meta property="og:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 process - | 正文段 |&mdash;&mdash;&ndash; &mdash;&mdash;&mdash; | 用戶數據段 |&mdash;-program &mdash;&mdash;&mdash; | 系統數據段 |
-Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  Thread  process在切換時系統開銷大 同一個process中的thread共享相同的空間 Linux 不區分thread process  特點  通常thread指的是共享地址空間的多個任務 大大提高了任務切換的效率 避免額外的TLB &amp; cache的刷新  thread共享：" />
+<meta property="og:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 1 2 3  process ----------| 正文段 |-------- --------- | 用戶數據段 |----program --------- | 系統數據段 |   Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  殭屍與孤兒   殭屍：一個process 使用fork()建立child,如果child退出（terminated)，而父進程沒有呼叫wait/waitpid並回收時，OS進程表中仍然存在子進程的進程控制塊(PCB)，長時間保持殭屍狀態會導致resource leak" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://chinyu1229.github.io/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" /><meta property="og:image" content="http://chinyu1229.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-20T01:10:12&#43;08:00" />
@@ -17,8 +16,7 @@ Process control block  PID process user process status / priority file descripti
 <meta name="twitter:image" content="http://chinyu1229.github.io/logo.png"/>
 
 <meta name="twitter:title" content="Linux 嵌入式開發 – 並行開發—進程與線程"/>
-<meta name="twitter:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 process - | 正文段 |&mdash;&mdash;&ndash; &mdash;&mdash;&mdash; | 用戶數據段 |&mdash;-program &mdash;&mdash;&mdash; | 系統數據段 |
-Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  Thread  process在切換時系統開銷大 同一個process中的thread共享相同的空間 Linux 不區分thread process  特點  通常thread指的是共享地址空間的多個任務 大大提高了任務切換的效率 避免額外的TLB &amp; cache的刷新  thread共享："/>
+<meta name="twitter:description" content="Linux 嵌入式開發 &ndash; 並行開發&mdash;進程與線程 Process概念  program  存放在disk上的指令和數據的有序集合（文件） 靜態的   process  執行一個program所分配的資源總稱 是program一次執行的總稱 動態的，包括創建，調度，執行，死亡 有獨立的地址空間 linux為每個進程創建task_struct    Process 內容 1 2 3  process ----------| 正文段 |-------- --------- | 用戶數據段 |----program --------- | 系統數據段 |   Process control block  PID process user process status / priority file description table  Process 類型  交互進程：在shell下啟動，可在前臺/後台運行 批處理進程：和在終端無關，被提交到一個作業隊列中以便順序執行 守護進程：和終端無關，一直在後台運行  Process status  running / ready waiting  interrupt not interrupt   terminated : 收到signal後可以繼續運行 zombie ： pcb沒有被釋放  殭屍與孤兒   殭屍：一個process 使用fork()建立child,如果child退出（terminated)，而父進程沒有呼叫wait/waitpid並回收時，OS進程表中仍然存在子進程的進程控制塊(PCB)，長時間保持殭屍狀態會導致resource leak"/>
 <meta name="application-name" content="Wandering World">
 <meta name="apple-mobile-web-app-title" content="Wandering World"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -31,7 +29,7 @@ Process control block  PID process user process status / priority file descripti
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/chinyu1229.github.io\/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B\/"
-        },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  706 ,
+        },"image": ["http:\/\/chinyu1229.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  730 ,
         "url": "http:\/\/chinyu1229.github.io\/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B\/","datePublished": "2021-05-20T01:10:12+08:00","dateModified": "2021-05-20T01:10:12+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,7 +111,7 @@ Process control block  PID process user process status / priority file descripti
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Linux 嵌入式開發 – 並行開發—進程與線程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Chinyu</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linux_%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC/"><i class="far fa-folder fa-fw"></i>Linux_嵌入式開發</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-20">2021-05-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;706 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-20">2021-05-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;730 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;<span id="/2021-05-20-linux-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%96%8B%E7%99%BC-%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC%E9%80%B2%E7%A8%8B%E8%88%87%E7%B7%9A%E7%A8%8B/" class="leancloud_visitors" data-flag-title="Linux 嵌入式開發 – 並行開發—進程與線程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
@@ -128,7 +126,11 @@ Process control block  PID process user process status / priority file descripti
     <li><a href="#process-內容">Process 內容</a></li>
     <li><a href="#process-control-block">Process control block</a></li>
     <li><a href="#process-類型">Process 類型</a></li>
-    <li><a href="#process-status">Process status</a></li>
+    <li><a href="#process-status">Process status</a>
+      <ul>
+        <li><a href="#殭屍與孤兒">殭屍與孤兒</a></li>
+      </ul>
+    </li>
     <li><a href="#thread">Thread</a>
       <ul>
         <li><a href="#特點">特點</a></li>
@@ -183,10 +185,19 @@ Process control block  PID process user process status / priority file descripti
 </li>
 </ul>
 <h2 id="process-內容">Process 內容</h2>
-<p>process   - | 正文段      |&mdash;&mdash;&ndash;
-&mdash;&mdash;&mdash; | 用戶數據段   |&mdash;-program
-&mdash;&mdash;&mdash; | 系統數據段   |</p>
-<h2 id="process-control-block">Process control block</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> process   ----------| 正文段      |--------
+           --------- | 用戶數據段   |----program
+           --------- | 系統數據段   |
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="process-control-block">Process control block</h2>
 <ul>
 <li>PID</li>
 <li>process user</li>
@@ -211,6 +222,26 @@ Process control block  PID process user process status / priority file descripti
 <li>terminated : 收到signal後可以繼續運行</li>
 <li>zombie ： pcb沒有被釋放</li>
 </ul>
+<h3 id="殭屍與孤兒">殭屍與孤兒</h3>
+<ul>
+<li>
+<p>殭屍：一個process 使用<code>fork()</code>建立child,如果child退出（terminated)，而父進程沒有呼叫wait/waitpid並回收時，OS進程表中仍然存在子進程的進程控制塊(PCB)，長時間保持殭屍狀態會導致resource leak</p>
+<ul>
+<li>簡而言之可以說子進程已死但沒有被回收，且<code>kill()</code>指令對其無效</li>
+</ul>
+</li>
+<li>
+<p>孤兒：process fork後，父程序退出，但他的一個或多個子程序還在執行，這些子程序即是孤兒程序，孤兒程序將被init程序(程序號為1的程序)所收養，並由init程序對它們完成狀態收集工作。</p>
+</li>
+<li>
+<p>收割殭屍進程的方法是通過kill命令手工向其父進程發送SIGCHLD信號。如果其父進程仍然拒絕收割殭屍進程，則終止父進程，使得init進程收養殭屍進程。init進程周期執行wait系統調用收割其收養的所有殭屍進程。</p>
+<p>為避免產生殭屍進程，實際應用中一般採取的方式是：</p>
+<ol>
+<li>將父進程中對SIGCHLD信號的處理函數設為SIG_IGN（忽略信號或稱作不註冊handler）-&gt; 子進程死掉會直接被回收</li>
+<li>fork兩次並殺死一級子進程，令二級子進程成為孤兒進程而被init所「收養」、清理</li>
+</ol>
+</li>
+</ul>
 <p><img
         class="lazyload"
         src="/svg/loading.min.svg"
@@ -219,6 +250,7 @@ Process control block  PID process user process status / priority file descripti
         data-sizes="auto"
         alt="https://i.imgur.com/0LavzmI.png"
         title="https://i.imgur.com/0LavzmI.png" /></p>
+<img src = "process_status.png">
 <h2 id="thread">Thread</h2>
 <ul>
 <li>process在切換時系統開銷大</li>
@@ -380,11 +412,22 @@ Process control block  PID process user process status / priority file descripti
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>編譯：<code>gcc -o thread_demo thread_demo.c -lpthread</code>
-<code>$ ./thread_demo </code>
-result is 3Q for waiting for me
-msg is mark by thread</p>
-<h2 id="thread通信----同步synchronization">Thread通信 &ndash; 同步synchronization</h2>
+</div><p>編譯：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">$ gcc -o thread_demo thread_demo.c -lpthread
+$ ./thread_demo 
+result is 3Q <span class="k">for</span> waiting <span class="k">for</span> me
+msg is mark by thread
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="thread通信----同步synchronization">Thread通信 &ndash; 同步synchronization</h2>
 <ul>
 <li>由信號量來決定線程是繼續運行還是阻塞</li>
 </ul>
@@ -838,11 +881,21 @@ int sem_post(sem_t *sem); // V操作
 </code></pre></td></tr></table>
 </div>
 </div><p>編譯：</p>
-<p>使用互斥鎖
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">使用互斥鎖
 gcc -o test test.c -lpthread -D_LOCK_
 不使用互斥鎖
-gcc -o test test.c -lpthread</p>
-</div><div class="post-footer" id="post-footer">
+gcc -o test test.c -lpthread 
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">

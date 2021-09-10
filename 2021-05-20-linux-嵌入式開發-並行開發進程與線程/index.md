@@ -13,10 +13,11 @@
     * linux為每個進程創建task_struct
 
 ## Process 內容
-              
- process   - | 正文段      |--------
+```              
+ process   ----------| 正文段      |--------
            --------- | 用戶數據段   |----program
            --------- | 系統數據段   |
+```
 
 ## Process control block
 * PID
@@ -37,7 +38,20 @@
 * terminated : 收到signal後可以繼續運行
 * zombie ： pcb沒有被釋放
 
+### 殭屍與孤兒
+* 殭屍：一個process 使用`fork()`建立child,如果child退出（terminated)，而父進程沒有呼叫wait/waitpid並回收時，OS進程表中仍然存在子進程的進程控制塊(PCB)，長時間保持殭屍狀態會導致resource leak
+  * 簡而言之可以說子進程已死但沒有被回收，且`kill()`指令對其無效
+* 孤兒：process fork後，父程序退出，但他的一個或多個子程序還在執行，這些子程序即是孤兒程序，孤兒程序將被init程序(程序號為1的程序)所收養，並由init程序對它們完成狀態收集工作。
+* 收割殭屍進程的方法是通過kill命令手工向其父進程發送SIGCHLD信號。如果其父進程仍然拒絕收割殭屍進程，則終止父進程，使得init進程收養殭屍進程。init進程周期執行wait系統調用收割其收養的所有殭屍進程。
+
+    為避免產生殭屍進程，實際應用中一般採取的方式是：
+
+    1. 將父進程中對SIGCHLD信號的處理函數設為SIG_IGN（忽略信號或稱作不註冊handler）-> 子進程死掉會直接被回收
+    2. fork兩次並殺死一級子進程，令二級子進程成為孤兒進程而被init所「收養」、清理
+
 ![](https://i.imgur.com/0LavzmI.png)
+
+<img src = "process_status.png">
 
 ## Thread
 * process在切換時系統開銷大
@@ -138,10 +152,13 @@ int main(void)
 	return 0;
 }
 ```
-編譯：`gcc -o thread_demo thread_demo.c -lpthread`
-`$ ./thread_demo `
+編譯：
+```shell
+$ gcc -o thread_demo thread_demo.c -lpthread
+$ ./thread_demo 
 result is 3Q for waiting for me
 msg is mark by thread
+```
 
 ## Thread通信 -- 同步synchronization
 * 由信號量來決定線程是繼續運行還是阻塞
@@ -380,9 +397,11 @@ void *func(void *arg)
     }
 }
 ```
-編譯：
 
+編譯：
+```
 使用互斥鎖
 gcc -o test test.c -lpthread -D_LOCK_
 不使用互斥鎖
 gcc -o test test.c -lpthread 
+```
