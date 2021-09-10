@@ -10,7 +10,8 @@
 4. 查詢時比array慢
 
 圖示：
-<img src="link-list.png" width = "80%>
+
+<img src="link-list.png">
 
 靜態配置：
 ```c

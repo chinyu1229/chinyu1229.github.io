@@ -10,9 +10,9 @@
     <pubDate>Fri, 10 Sep 2021 19:00:12 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://chinyu1229.github.io/2021-09-10-linklist/</guid>
-    <description><![CDATA[Link List 基本概念  相同結構的東西（用struct)使用指標（pointer)串起來，相同結構的東西稱作NODE 在加入/刪除比array上好操作 有需要的時候才動態的配置空間(malloc / new) 查詢時比array慢  圖示： &lt;img src=&ldquo;link-list.png&rdquo; width = &ldquo;80%&gt;
+    <description><![CDATA[Link List 基本概念  相同結構的東西（用struct)使用指標（pointer)串起來，相同結構的東西稱作NODE 在加入/刪除比array上好操作 有需要的時候才動態的配置空間(malloc / new) 查詢時比array慢  圖示：
 靜態配置：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt; struct node{ int data; struct node *next; }; typedef struct node Node; int main() { Node x, y, z; Node *ptr = &amp;x; x.]]></description>
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29  #include&lt;stdio.h&gt;#include&lt;stdlib.h&gt; struct node{ int data; struct node *next; }; typedef struct node Node; int main() { Node x, y, z; Node *ptr = &amp;x; x.data = 10; x.]]></description>
 </item><item>
     <title>整數二分法 Binary Search</title>
     <link>http://chinyu1229.github.io/2021-9-7-%E4%BA%8C%E5%88%86%E6%B3%95/</link>
