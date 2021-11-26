@@ -26,7 +26,10 @@ Linux 用書是 `The Linux Programming Interface` 以及 `Advanced Programming i
   * socket programming
 * C++
   * ACM LEETCODE
-* JAVA(可看懂，少寫)
+* JAVA
+  * Spring
+  * Springboot
+* Golang
 * NODEJS
 * 組合語言
   * PIC-18
