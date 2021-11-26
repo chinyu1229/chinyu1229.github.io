@@ -4,7 +4,20 @@
         <link>http://chinyu1229.github.io/categories/golang/</link>
         <description>Golang - Category - Wandering World</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>chinyu0916@gmail.com (Chinyu)</managingEditor>
-            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 05 Nov 2021 19:20:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/golang/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>chinyu0916@gmail.com (Chinyu)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 15 Nov 2021 15:20:12 &#43;0800</lastBuildDate><atom:link href="http://chinyu1229.github.io/categories/golang/" rel="self" type="application/rss+xml" /><item>
+    <title>Golang - 並行開發 --- Mutex</title>
+    <link>http://chinyu1229.github.io/2021-11-15-golang_%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC/</link>
+    <pubDate>Mon, 15 Nov 2021 15:20:12 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://chinyu1229.github.io/2021-11-15-golang_%E4%B8%A6%E8%A1%8C%E9%96%8B%E7%99%BC/</guid>
+    <description><![CDATA[Golang 並行（concurrent）開發 共享資源訪問控制 Mutex 結構 1 2 3 4  type Mutex struct{ state int32 sema uint32 }   state紀錄Mutex的四種狀態：主要兩個為Locked:表示是否被鎖定、Waiter:表示blocked中且等待拿鎖的goroutine數量
+Method Lock()：加鎖 Unlock()：解鎖
+加鎖過程：
+ 去判斷Locked值是否為0，若是0，把Locked set為1，代表拿到鎖 若是1，Waiter的值+1，並且此goroutine blocked 直到 Locked == 0才會被喚醒  解鎖過程：
+ 若沒有其他goroutine blocked，只要把Locked set 為 0，不需要釋放 semaphore 若有其他blocked goroutine，首先先把Locked set 為 0，然後查看到Waiter&gt;0，釋放一個 semaphore，喚醒一個blocked goroutine，被喚醒的goroutine把Locked set 為1  自旋 lock時，如果Locked為1，嘗試lock的goroutine不是馬上進入blocked，而是會持續地(時間很短)探測Locked是否為0，好處是可以避免goroutine的切換
+ 相當於CPU的PAUSE指令，過程中會持續探測Locked（與sleep不同的是不需要將goroutine轉成睡眠狀態） 自旋要滿足  自旋次數夠小，通常設定為4 CPU核心數&gt;1 scheduler 的可運行queue必須為空    也就是CPU不忙的時候啟用自旋
+問題： 如果自旋過程中獲得鎖，避免了goroutine切換，那之前被blocked的goroutine很難獲得鎖，造成starving 因此新版的go新增了Mutex &ndash; starving欄位]]></description>
+</item><item>
     <title>Golang - 平行開發</title>
     <link>http://chinyu1229.github.io/2021-11-05-golang_%E5%B9%B3%E8%A1%8C/</link>
     <pubDate>Fri, 05 Nov 2021 19:20:12 &#43;0800</pubDate>
